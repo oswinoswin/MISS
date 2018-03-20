@@ -5,7 +5,7 @@ import java.util.List;
 /**
  * Created by nazwa on 2018-03-18.
  */
-public class KDTree {
+public class KDTree<S>  {
 
     private class KDNode{
         private KDNode left;
@@ -21,8 +21,12 @@ public class KDTree {
         }
     }
 
+    public boolean isEmpty(){
+        return true;
+    }
+
     private KDNode root;
-    private int depth;
+    private long depth;
     private CoordinateComparator comparator;
     public KDTree() {
         this.root = null;
@@ -30,18 +34,18 @@ public class KDTree {
         this.comparator = new CoordinateComparator(this.depth);
     }
 
-    public  KDTree(List<Point2D.Double> pointList, int depth){
+    public  KDTree(List<S> pointList, long depth){
         this.depth = depth;
         this.comparator = new CoordinateComparator(depth);
-        pointList.sort(comparator);
+//        pointList.sort(comparator);
         int middle = pointList.size()/2 + 1;
 
 
     }
 
     private class CoordinateComparator implements Comparator<Point2D.Double> {
-        int depth;
-        public CoordinateComparator(int depth) {
+        long depth;
+        public CoordinateComparator(long depth) {
             this.depth = depth;
         }
 

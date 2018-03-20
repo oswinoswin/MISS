@@ -19,24 +19,28 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class SteadyStateGeneticAlgorithmRunner {
+public class OurSteadyStateGeneticAlgorithmRunner {
 
     public static void main(String[] args) throws Exception {
         Algorithm<DoubleSolution> algorithm;
-        DoubleProblem problem = new Rastrigin(20) ;
+        DoubleProblem problem = new Rastrigin(2) ;
 
         CrossoverOperator<DoubleSolution> crossoverOperator =
                 new SBXCrossover(0.9, 20.0) ;
         MutationOperator<DoubleSolution> mutationOperator =
                 new PolynomialMutation(1.0 / problem.getNumberOfVariables(), 20.0) ;
-        SelectionOperator<List<DoubleSolution>, DoubleSolution> selectionOperator = new BinaryTournamentSelection<>() ;
+        SelectionOperator<List<DoubleSolution>,DoubleSolution> selectionOperator = new KDTreeSelection<>() ;
 
-        algorithm = new GeneticAlgorithmBuilder<DoubleSolution>(problem, crossoverOperator, mutationOperator)
-                .setPopulationSize(100)
-                .setMaxEvaluations(25000)
-                .setSelectionOperator(selectionOperator)
-                .setVariant(GeneticAlgorithmBuilder.GeneticAlgorithmVariant.STEADY_STATE)
-                .build() ;
+        int populationSize = 3;
+        int maxEvaluations = 4;
+
+        algorithm = new OurSteadyStateGeneticAlgorithm<>(problem, populationSize, maxEvaluations, crossoverOperator, mutationOperator);
+//                new GeneticAlgorithmBuilder<DoubleSolution>(problem, crossoverOperator, mutationOperator)
+//                .setPopulationSize(100)
+//                .setMaxEvaluations(25000)
+//                .setSelectionOperator(selectionOperator)
+//                .setVariant(GeneticAlgorithmBuilder.GeneticAlgorithmVariant.STEADY_STATE)
+//                .build() ;
 
         AlgorithmRunner algorithmRunner = new AlgorithmRunner.Executor(algorithm)
                 .execute() ;
