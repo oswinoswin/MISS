@@ -1,14 +1,12 @@
+import kdtree_laura.KDTreeSelection;
 import org.uma.jmetal.algorithm.Algorithm;
-import org.uma.jmetal.algorithm.singleobjective.geneticalgorithm.GeneticAlgorithmBuilder;
 import org.uma.jmetal.operator.CrossoverOperator;
 import org.uma.jmetal.operator.MutationOperator;
 import org.uma.jmetal.operator.SelectionOperator;
 import org.uma.jmetal.operator.impl.crossover.SBXCrossover;
 import org.uma.jmetal.operator.impl.mutation.PolynomialMutation;
-import org.uma.jmetal.operator.impl.selection.BinaryTournamentSelection;
 import org.uma.jmetal.problem.DoubleProblem;
 import org.uma.jmetal.problem.singleobjective.Rastrigin;
-import org.uma.jmetal.problem.singleobjective.Sphere;
 import org.uma.jmetal.solution.DoubleSolution;
 import org.uma.jmetal.util.AlgorithmRunner;
 import org.uma.jmetal.util.JMetalLogger;
@@ -23,13 +21,13 @@ public class OurSteadyStateGeneticAlgorithmRunner {
 
     public static void main(String[] args) throws Exception {
         Algorithm<DoubleSolution> algorithm;
-        DoubleProblem problem = new Rastrigin(2) ;
+        DoubleProblem problem = new Rastrigin(2);
 
         CrossoverOperator<DoubleSolution> crossoverOperator =
-                new SBXCrossover(0.9, 20.0) ;
+                new SBXCrossover(0.9, 20.0);
         MutationOperator<DoubleSolution> mutationOperator =
-                new PolynomialMutation(1.0 / problem.getNumberOfVariables(), 20.0) ;
-        SelectionOperator<List<DoubleSolution>,DoubleSolution> selectionOperator = new KDTreeSelection<>() ;
+                new PolynomialMutation(1.0 / problem.getNumberOfVariables(), 20.0);
+        SelectionOperator<List<DoubleSolution>, DoubleSolution> selectionOperator = new KDTreeSelection<>();
 
         int populationSize = 3;
         int maxEvaluations = 4;
@@ -43,13 +41,13 @@ public class OurSteadyStateGeneticAlgorithmRunner {
 //                .build() ;
 
         AlgorithmRunner algorithmRunner = new AlgorithmRunner.Executor(algorithm)
-                .execute() ;
+                .execute();
 
-        long computingTime = algorithmRunner.getComputingTime() ;
+        long computingTime = algorithmRunner.getComputingTime();
 
-        DoubleSolution solution = algorithm.getResult() ;
-        List<DoubleSolution> population = new ArrayList<>(1) ;
-        population.add(solution) ;
+        DoubleSolution solution = algorithm.getResult();
+        List<DoubleSolution> population = new ArrayList<>(1);
+        population.add(solution);
 
         new SolutionListOutput(population)
                 .setSeparator("\t")
@@ -61,6 +59,6 @@ public class OurSteadyStateGeneticAlgorithmRunner {
         JMetalLogger.logger.info("Objectives values have been written to file FUN.tsv");
         JMetalLogger.logger.info("Variables values have been written to file VAR.tsv");
 
-        JMetalLogger.logger.info("Fitness: " + solution.getObjective(0)) ;
+        JMetalLogger.logger.info("Fitness: " + solution.getObjective(0));
     }
 }

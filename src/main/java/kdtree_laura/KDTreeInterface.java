@@ -1,3 +1,5 @@
+package kdtree_laura;
+
 /**
  * Created by nazwa on 2018-03-18.
  */

@@ -1,3 +1,5 @@
+package kdtree_laura;
+
 import org.uma.jmetal.operator.SelectionOperator;
 import org.uma.jmetal.util.JMetalException;
 
