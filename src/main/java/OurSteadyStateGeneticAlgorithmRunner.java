@@ -21,7 +21,7 @@ public class OurSteadyStateGeneticAlgorithmRunner {
 
     public static void main(String[] args) throws Exception {
         Algorithm<DoubleSolution> algorithm;
-        DoubleProblem problem = new Rastrigin(2);
+        DoubleProblem problem = new Rastrigin(3);
 
         CrossoverOperator<DoubleSolution> crossoverOperator =
                 new SBXCrossover(0.9, 20.0);
