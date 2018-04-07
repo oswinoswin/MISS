@@ -1,8 +1,6 @@
-import kdtree_laura.KDTreeSelection;
 import org.uma.jmetal.algorithm.Algorithm;
 import org.uma.jmetal.operator.CrossoverOperator;
 import org.uma.jmetal.operator.MutationOperator;
-import org.uma.jmetal.operator.SelectionOperator;
 import org.uma.jmetal.operator.impl.crossover.SBXCrossover;
 import org.uma.jmetal.operator.impl.mutation.PolynomialMutation;
 import org.uma.jmetal.problem.DoubleProblem;
@@ -27,7 +25,7 @@ public class OurSteadyStateGeneticAlgorithmRunner {
                 new SBXCrossover(0.9, 20.0);
         MutationOperator<DoubleSolution> mutationOperator =
                 new PolynomialMutation(1.0 / problem.getNumberOfVariables(), 20.0);
-        SelectionOperator<List<DoubleSolution>, DoubleSolution> selectionOperator = new KDTreeSelection<>();
+        KDTreeSelection<DoubleSolution> selectionOperator = new KDTreeSelection<DoubleSolution>();
 
         int populationSize = 3;
         int maxEvaluations = 4;
