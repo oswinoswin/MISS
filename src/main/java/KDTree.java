@@ -1,9 +1,7 @@
 import org.uma.jmetal.solution.Solution;
 import org.uma.jmetal.util.JMetalException;
 
-import java.util.Comparator;
 import java.util.List;
-import java.util.StringTokenizer;
 
 public class KDTree<S extends Solution<?>> implements IKDTree {
 
@@ -13,6 +11,12 @@ public class KDTree<S extends Solution<?>> implements IKDTree {
     @Override
     public void removeSolution(Solution s) {
         //TODO
+    }
+
+
+
+    private KDNode traverseTree(Solution s, int depth){
+        return null;
     }
 
     @Override

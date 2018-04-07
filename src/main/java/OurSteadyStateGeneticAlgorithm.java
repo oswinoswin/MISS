@@ -12,10 +12,6 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.logging.Logger;
 
-/**
- * @author Antonio J. Nebro <antonio@lcc.uma.es>
- */
-@SuppressWarnings("serial")
 public class OurSteadyStateGeneticAlgorithm<S extends Solution<?>> extends AbstractGeneticAlgorithm<S, S> {
     private Comparator<S> comparator;
     private int maxEvaluations;
