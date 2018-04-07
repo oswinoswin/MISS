@@ -1,8 +1,5 @@
 import org.uma.jmetal.solution.Solution;
 
-import java.util.Comparator;
-import java.util.StringTokenizer;
-
 class KDNode {
     Solution solution;
     KDNode left;
@@ -47,6 +44,31 @@ class KDNode {
         return this.right == null && this.left == null;
     }
 
+    public KDNode findInSubTree(Solution s){
+        if(this.solution == s){
+            return this;
+        }
+        depth = depth % dimensions;
+        if(Double.parseDouble(this.solution.getVariableValueString(depth)) > Double.parseDouble(s.getVariableValueString(depth))){
+            if (left != null){
+                return left.findInSubTree(s);
+            } else {
+                return null;
+                //throw new JMetalException("Solution not found") ;
+            }
+        } else {
+            if (right != null){
+                return right.findInSubTree(s);
+            } else {
+                return null;
+                //throw new JMetalException("Solution not found") ;
+            }
+        }
+    }
+
+
+
+
     @Override
     public String toString(){
         String leftString = "";
@@ -58,6 +80,10 @@ class KDNode {
             rightString = right.toString();
         }
         return this.solution + "" + leftString + "|||" + rightString;
+    }
+
+    public Solution getSolution(){
+        return this.solution;
     }
 
 }
