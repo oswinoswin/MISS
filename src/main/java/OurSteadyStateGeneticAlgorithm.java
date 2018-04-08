@@ -12,10 +12,6 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.logging.Logger;
 
-/**
- * @author Antonio J. Nebro <antonio@lcc.uma.es>
- */
-@SuppressWarnings("serial")
 public class OurSteadyStateGeneticAlgorithm<S extends Solution<?>> extends AbstractGeneticAlgorithm<S, S> {
     private Comparator<S> comparator;
     private int maxEvaluations;
@@ -53,7 +49,7 @@ public class OurSteadyStateGeneticAlgorithm<S extends Solution<?>> extends Abstr
 
         this.selectionOperator = new RandomSelection<>();
         // TODO
-//        this.tree = new KDTree.Manhattan<>(problem.getNumberOfVariables());
+        this.tree = new KDTree<>();
 
         comparator = new ObjectiveComparator<S>(0);
 
@@ -124,8 +120,19 @@ public class OurSteadyStateGeneticAlgorithm<S extends Solution<?>> extends Abstr
     protected List<S> evaluatePopulation(List<S> population) {
         if (tree.isEmpty()) {
             tree.createTree(population);
+            System.out.println(tree);
         }
-//    int i = 0;
+
+
+        OurSolutionComparator comparator = new OurSolutionComparator();
+//        comparator.setDepth(2);
+        population.sort(comparator);
+//        System.out.println(population);
+
+
+
+
+        //    int i = 0;
         for (S solution : population) {
 //      LOGGER.info(solution.toString());
 //      LOGGER.info(Integer.toString(population.size()).concat(" evaluate ").concat(Integer.toString(i)));

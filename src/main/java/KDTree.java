@@ -5,21 +5,27 @@ import java.util.List;
 
 public class KDTree<S extends Solution<?>> implements IKDTree {
 
-    KDNode root;
+    private KDNode root;
+    private OurSolutionComparator solutionComparator = new OurSolutionComparator();
 
     @Override
     public void removeSolution(Solution s) {
         //TODO
     }
 
+
+
+    private KDNode traverseTree(Solution s, int depth){
+        return null;
+    }
+
     @Override
     public void addSolution(Solution s) {
         if(this.isEmpty()){
-            root = new KDNode(s);
+            root = new KDNode(s, 0);
         }
         else{
-            KDNode toAdd = new KDNode(s);
-            this.root.addChild(toAdd);
+            this.root.addChild(s);
         }
     }
 
@@ -40,12 +46,31 @@ public class KDTree<S extends Solution<?>> implements IKDTree {
         return root == null;
     }
 
+    private <S extends Solution<?>> void createSubTrees(List<S> population, int depth){
+        if (population.size() > 2){
+            solutionComparator.setDepth(depth);
+            population.sort(solutionComparator);
+            int median = population.size()/2;
+            addSolution(population.get(median));
+            createSubTrees(population.subList(0,median), depth+1);
+            createSubTrees(population.subList(median+1, population.size()), depth+1);
+        }
+        else {
+            for(Solution s : population){
+                addSolution(s);
+            }
+        }
+    }
+
     @Override
     public <S extends Solution<?>> void createTree(List<S> population) {
-        for(Solution el: population){
-            KDNode toAdd = new KDNode(el);
-            root.addChild(toAdd);
-        }
+
+        solutionComparator.setDepth(0);
+        population.sort(solutionComparator);
+        int median = population.size()/2;
+        addSolution(population.get(median));
+        createSubTrees(population.subList(0,median), 1);
+        createSubTrees(population.subList(median+1, population.size()), 1);
 
     }
 
@@ -55,5 +80,11 @@ public class KDTree<S extends Solution<?>> implements IKDTree {
     public KDTree(KDNode root) {
         this.root = root;
     }
+
+    @Override
+    public String toString(){
+        return this.root.toString();
+    }
+
 
 }
