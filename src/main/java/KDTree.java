@@ -10,7 +10,38 @@ public class KDTree<S extends Solution<?>> implements IKDTree {
 
     @Override
     public void removeSolution(Solution s) {
-        //TODO
+        KDNode toRemove = this.findInTree(s);
+        if ( toRemove == null){
+            return;
+        }
+
+        if (toRemove == this.root){
+            //TODO
+        }
+
+        else{
+            KDNode parent = this.findParent(toRemove);
+            if( parent.right == toRemove){
+                parent.removeRightChild();
+            }else {
+                parent.removeLeftChild();
+            }
+        }
+
+
+    }
+
+    public KDNode findInTree(Solution s){
+        return root.findInSubTree(s);
+    }
+
+    public KDNode findParent(KDNode node){
+        if( node == this.root){
+            return null;
+        }
+        else {
+            return root.findParentInSubTree(node);
+        }
     }
 
 

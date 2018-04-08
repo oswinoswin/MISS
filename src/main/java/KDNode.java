@@ -95,19 +95,50 @@ class KDNode {
         }
     }
 
-    public void removeLeft(){
-        if(this.left.isLeaf()){
+    public KDNode findMin(){
+        if(this.isLeaf()){
+            return this;
+        }
+        return this.left.findMin();
+    }
+
+    public void removeLeftChild(){
+        KDNode leftChild = this.left;
+
+        if(leftChild.isLeaf()){
             this.left = null;
         }
         //case when left has only one child
-        if (this.left.left != null && this.left.right == null){
-            this.left = this.left.left;
+        if (leftChild.left != null && leftChild.right == null){
+            this.left = leftChild.left;
 
         }
-        if (this.left.right != null && this.left.left == null){
-            this.left = this.left.right;
+        if (leftChild.right != null && leftChild.left == null){
+            this.left = leftChild.right;
         }
         //else find succesor of right
+        KDNode next = leftChild.right.findMin();
+        this.left = next;
+
+    }
+
+    public void removeRightChild(){
+        KDNode rightChild = this.right;
+
+        if(rightChild.isLeaf()){
+            this.right = null;
+        }
+        //case when left has only one child
+        if (rightChild.left != null && rightChild.right == null){
+            this.left = rightChild.left;
+
+        }
+        if (rightChild.right != null && rightChild.left == null){
+            this.left = rightChild.right;
+        }
+        //else find succesor of right
+        KDNode next = rightChild.right.findMin();
+        this.left = next;
 
     }
 
