@@ -120,8 +120,15 @@ public class OurSteadyStateGeneticAlgorithm<S extends Solution<?>> extends Abstr
     protected List<S> evaluatePopulation(List<S> population) {
         if (tree.isEmpty()) {
             tree.createTree(population);
-            System.out.println(tree);
+            tree.printTree();
+
+            System.out.println(tree.distanced(tree.getRoot()));
+            //tree.removeSolution(population.get(0));
+            //System.out.println(tree.findMin());
+            //tree.removeSolution(tree.findMin().getSolution());
+            //System.out.println(tree);
         }
+
 
 
         OurSolutionComparator comparator = new OurSolutionComparator();

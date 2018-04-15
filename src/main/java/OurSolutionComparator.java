@@ -2,9 +2,7 @@ import org.uma.jmetal.solution.Solution;
 
 import java.util.Comparator;
 
-/**
- * Created by nazwa on 2018-03-23.
- */
+
 public class OurSolutionComparator implements Comparator<Solution> {
     private int depth = 0;
 

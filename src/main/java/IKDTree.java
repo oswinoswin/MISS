@@ -13,4 +13,16 @@ public interface IKDTree {
     boolean isEmpty();
 
     <S extends Solution<?>> void createTree(List<S> population);
+
+
+    KDNode findMin();
+
+
+    void printTree();
+
+    int findHeight(KDNode node);
+
+    KDNode getRoot();
+    KDNode distanced(KDNode kdNode);
+
 }

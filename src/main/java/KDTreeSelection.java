@@ -14,6 +14,6 @@ public class KDTreeSelection<S extends Solution<?>>  implements SelectionOperato
         }
         //TODO find the best solution
         //Maybe do more selections with kdtree
-        return null;
+        return (S) skdTree.distanced(skdTree.getRoot()).solution;
     }
 }

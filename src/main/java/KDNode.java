@@ -4,7 +4,7 @@ class KDNode {
     Solution solution;
     KDNode left;
     KDNode right;
-    private int depth;
+     int depth;
     int dimensions;
 
     public KDNode(Solution solution, int depth) {
@@ -96,10 +96,24 @@ class KDNode {
     }
 
     public KDNode findMin(){
-        if(this.isLeaf()){
+        KDNode prev = this;
+
+        if(prev.left == null){
+            return prev;
+        }
+        KDNode next = prev.left;
+
+        while( next != null){
+            prev = next;
+            next = prev.left;
+        }
+
+        return prev;
+
+        /*if(this.left == null){
             return this;
         }
-        return this.left.findMin();
+        return this.left.findMin();*/
     }
 
     public void removeLeftChild(){
@@ -144,18 +158,31 @@ class KDNode {
 
 
 
+    public void printSubtree(){
+        String prefix = "";
+        for( int i = 0; i < this.depth; i++){
+            prefix = prefix + "*";
+        }
+        System.out.println(prefix + " " + this.getSolution());
+        if(left != null)
+            left.printSubtree();
+        if(right != null)
+            right.printSubtree();
+
+    }
 
     @Override
     public String toString(){
-        String leftString = "";
-        String rightString = "";
-        if (left != null){
-            leftString = left.toString();
-        }
-        if (right != null){
-            rightString = right.toString();
-        }
-        return this.solution + "" + leftString + "|||" + rightString;
+        return "" + this.solution;
+//        String leftString = "";
+//        String rightString = "";
+//        if (left != null){
+//            leftString = left.toString();
+//        }
+//        if (right != null){
+//            rightString = right.toString();
+//        }
+//        return "&" +  this.solution + "" + leftString + "*" + rightString;
     }
 
     public Solution getSolution(){

@@ -5,8 +5,62 @@ import java.util.List;
 
 public class KDTree<S extends Solution<?>> implements IKDTree {
 
-    private KDNode root;
+    public KDNode root;
     private OurSolutionComparator solutionComparator = new OurSolutionComparator();
+
+
+    @Override
+    public KDNode distanced(KDNode kdNode) {
+        if(kdNode == null){
+            return null;
+        }
+        if(kdNode == root){
+            if(findHeight(root.left) < findHeight(root.right)){
+                return goLeft(root);
+            }
+        }
+        //node is in root right subtree
+        if(Double.parseDouble(root.solution.getVariableValueString(0)) < Double.parseDouble(kdNode.solution.getVariableValueString(0))){
+            return goLeft(root);
+        }
+        return goRight(root);
+    }
+
+    //finds height of a subtree
+    public int findHeight(KDNode node){
+        if(node == null){
+            return 0;
+        }
+        else{
+            return 1 + Math.max(findHeight(node.left),findHeight(node.right));
+        }
+    }
+
+    private KDNode goRight(KDNode node){
+        if(node == null){
+            return null;
+        }
+        while (node.right != null){
+            node = node.right;
+        }
+        return node;
+    }
+
+    private KDNode goLeft(KDNode node){
+        if(node == null){
+            return null;
+        }
+        while (node.left != null){
+            node = node.left;
+        }
+        return node;
+    }
+
+    public KDNode getRoot(){
+        return this.root;
+    }
+
+
 
     @Override
     public void removeSolution(Solution s) {
@@ -30,6 +84,7 @@ public class KDTree<S extends Solution<?>> implements IKDTree {
 
 
     }
+
 
     public KDNode findInTree(Solution s){
         return root.findInSubTree(s);
@@ -115,6 +170,14 @@ public class KDTree<S extends Solution<?>> implements IKDTree {
     @Override
     public String toString(){
         return this.root.toString();
+    }
+
+    public KDNode findMin(){
+        return this.root.findMin();
+    };
+
+    public void printTree(){
+        this.root.printSubtree();
     }
 
 
