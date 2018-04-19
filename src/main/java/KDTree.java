@@ -26,6 +26,23 @@ public class KDTree<S extends Solution<?>> implements IKDTree {
         return goRight(root);
     }
 
+    @Override
+    public KDNode distancedWithSteps(KDNode kdNode) {
+        if(kdNode == null){
+            return null;
+        }
+        if(kdNode == root){
+            if(findHeight(root.left) < findHeight(root.right)){
+                return goLeft(root, kdNode.depth);
+            }
+        }
+        //node is in root right subtree
+        if(Double.parseDouble(root.solution.getVariableValueString(0)) < Double.parseDouble(kdNode.solution.getVariableValueString(0))){
+            return goLeft(root, kdNode.depth);
+        }
+        return goRight(root);
+    }
+
     //finds height of a subtree
     public int findHeight(KDNode node){
         if(node == null){
@@ -45,6 +62,16 @@ public class KDTree<S extends Solution<?>> implements IKDTree {
         }
         return node;
     }
+    private KDNode goRight(KDNode node, int steps){
+        if(node == null){
+            return null;
+        }
+        while (node.right != null && steps > 0 ){
+            node = node.right;
+            steps--;
+        }
+        return node;
+    }
 
     private KDNode goLeft(KDNode node){
         if(node == null){
@@ -52,6 +79,17 @@ public class KDTree<S extends Solution<?>> implements IKDTree {
         }
         while (node.left != null){
             node = node.left;
+        }
+        return node;
+    }
+
+    private KDNode goLeft(KDNode node, int steps){
+        if(node == null){
+            return null;
+        }
+        while (node.left != null && steps > 0 ){
+            node = node.left;
+            steps--;
         }
         return node;
     }

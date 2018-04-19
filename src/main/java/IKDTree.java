@@ -23,6 +23,7 @@ public interface IKDTree {
     int findHeight(KDNode node);
 
     KDNode getRoot();
-    KDNode distanced(KDNode kdNode);
+    KDNode distanced(KDNode kdNode);//returns the edge node from another subtree
+    KDNode distancedWithSteps(KDNode kdNode); //uses limited number of steps
 
 }

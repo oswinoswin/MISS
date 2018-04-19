@@ -4,7 +4,7 @@ class KDNode {
     Solution solution;
     KDNode left;
     KDNode right;
-     int depth;
+    int depth;
     int dimensions;
 
     public KDNode(Solution solution, int depth) {
