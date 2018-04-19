@@ -20,9 +20,7 @@ public interface IKDTree {
     void printTree();
 
     KDNode getRoot();
-
-    int findHeight(KDNode node);
-
-    KDNode distanced(KDNode kdNode);
+    KDNode distanced(KDNode kdNode);//returns the edge node from another subtree
+    KDNode distancedWithSteps(KDNode kdNode); //uses limited number of steps
 
 }

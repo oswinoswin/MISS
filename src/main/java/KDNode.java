@@ -180,56 +180,22 @@ class KDNode {
         return this.left.findMin();*/
     }
 
-    /*
-    public void removeSolution(Solution s){
-        removeSolution(this.findInSubTree(s));
-    }
-    */
-
-    /*
-    public void removeSolution(KDNode toRemove) {
-        if (toRemove == null) {
-            return;
-        }
-
-        if (toRemove == this) {
-            //TODO
-
-        } else {
-            KDNode parent = this.findParentInSubTree(toRemove);
-            if (parent.getRight() == toRemove) {
-                parent.removeRightChild();
-            } else {
-                parent.removeLeftChild();
-            }
-        }
-    }
-
-*/
     public void removeLeftChild(){
-        KDNode toRemove = this.left;
+        KDNode leftChild = this.left;
 
-        if(toRemove.isLeaf()){
+        if(leftChild.isLeaf()){
             this.left = null;
         }
-
-        if (toRemove.getRight() != null){
-            KDNode tmp = findMin(toRemove.getRight(), this.depth%this.dimensions);
-            this.left = tmp;
-
-        }
-
-
         //case when left has only one child
-        if (toRemove.left != null && toRemove.right == null){
-            this.left = toRemove.left;
+        if (leftChild.left != null && leftChild.right == null){
+            this.left = leftChild.left;
 
         }
-        if (toRemove.right != null && toRemove.left == null){
-            this.left = toRemove.right;
+        if (leftChild.right != null && leftChild.left == null){
+            this.left = leftChild.right;
         }
         //else find succesor of right
-        KDNode next = toRemove.right.findMin();
+        KDNode next = leftChild.right.findMin();
         this.left = next;
 
     }
@@ -249,7 +215,6 @@ class KDNode {
             this.left = rightChild.right;
         }
         //else find succesor of right
-
         KDNode next = rightChild.right.findMin();
         this.left = next;
 
@@ -272,15 +237,16 @@ class KDNode {
 
     @Override
     public String toString(){
-        String left = "";
-        String right = "";
-        if (this.left != null){
-            left += this.left.toString();
-        }
-        if (this.right != null){
-            right += this.right.toString();
-        }
-        return this.solution.toString();
+        return "" + this.solution;
+//        String leftString = "";
+//        String rightString = "";
+//        if (left != null){
+//            leftString = left.toString();
+//        }
+//        if (right != null){
+//            rightString = right.toString();
+//        }
+//        return "&" +  this.solution + "" + leftString + "*" + rightString;
     }
 
     private boolean equalSolutions(Solution s1, Solution s2){

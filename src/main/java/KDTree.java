@@ -125,34 +125,99 @@ public class KDTree<S extends Solution<?>> implements IKDTree {
         return goRight(root);
     }
 
-    private KDNode goRight(KDNode node) {
-        if (node == null) {
+    @Override
+    public KDNode distancedWithSteps(KDNode kdNode) {
+        if(kdNode == null){
             return null;
         }
-        while (node.getRight() != null) {
-            node = node.getRight();
+        if(kdNode == root){
+            if(findHeight(root.left) < findHeight(root.right)){
+                return goLeft(root, kdNode.depth);
+            }
         }
-        return node;
-    }
-
-    private KDNode goLeft(KDNode node) {
-        if (node == null) {
-            return null;
+        //node is in root right subtree
+        if(Double.parseDouble(root.solution.getVariableValueString(0)) < Double.parseDouble(kdNode.solution.getVariableValueString(0))){
+            return goLeft(root, kdNode.depth);
         }
-        while (node.getLeft() != null) {
-            node = node.getLeft();
-        }
-        return node;
+        return goRight(root);
     }
 
     //finds height of a subtree
-    public int findHeight(KDNode node) {
-        if (node == null) {
+    public int findHeight(KDNode node){
+        if(node == null){
             return 0;
-        } else {
-            return 1 + Math.max(findHeight(node.getLeft()), findHeight(node.getRight()));
+        }
+        else{
+            return 1 + Math.max(findHeight(node.left),findHeight(node.right));
         }
     }
+
+    private KDNode goRight(KDNode node){
+        if(node == null){
+            return null;
+        }
+        while (node.right != null){
+            node = node.right;
+        }
+        return node;
+    }
+    private KDNode goRight(KDNode node, int steps){
+        if(node == null){
+            return null;
+        }
+        while (node.right != null && steps > 0 ){
+            node = node.right;
+            steps--;
+        }
+        return node;
+    }
+
+    private KDNode goLeft(KDNode node){
+        if(node == null){
+            return null;
+        }
+        while (node.left != null){
+            node = node.left;
+        }
+        return node;
+    }
+
+    private KDNode goLeft(KDNode node, int steps){
+        if(node == null){
+            return null;
+        }
+        while (node.left != null && steps > 0 ){
+            node = node.left;
+            steps--;
+        }
+        return node;
+    }
+
+    public KDNode getRoot(){
+        return this.root;
+    }
+
+
+
+    @Override
+    public void removeSolution(Solution s) {
+        KDNode toRemove = this.findInTree(s);
+        if ( toRemove == null){
+            return;
+        }
+
+        if (toRemove == this.root){
+            //TODO
+        }
+
+        else{
+            KDNode parent = this.findParent(toRemove);
+            if( parent.right == toRemove){
+                parent.removeRightChild();
+            }else {
+                parent.removeLeftChild();
+            }
+        }
 
     // Other functions
     private boolean equalSolutions(Solution solution1, Solution solution2){
@@ -240,6 +305,30 @@ public class KDTree<S extends Solution<?>> implements IKDTree {
     }
 
     private KDNode traverseTree(Solution s, int depth) {
+        return null;
+    }
+
+    @Override
+    public void addSolution(Solution s) {
+        if(this.isEmpty()){
+            root = new KDNode(s, 0);
+            solutionComparator.setDepth(root.depth);
+
+        }
+        else{
+            this.root.addChild(s);
+        }
+    }
+
+    @Override
+    public Solution getFarSolution(Solution solution) {
+        //TODO
+        if(this.root == null){
+            throw new JMetalException("The solution tree is null") ;
+        } else if (this.isEmpty()) {
+            throw new JMetalException("The solution tree is empty") ;
+        }
+
         return null;
     }
 
