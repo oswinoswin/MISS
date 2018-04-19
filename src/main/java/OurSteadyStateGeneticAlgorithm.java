@@ -46,7 +46,6 @@ public class OurSteadyStateGeneticAlgorithm<S extends Solution<?>> extends Abstr
         this.crossoverOperator = crossoverOperator;
         this.mutationOperator = mutationOperator;
 
-
         this.selectionOperator = new RandomSelection<>();
         // TODO
         this.tree = new KDTree<>();
@@ -66,18 +65,19 @@ public class OurSteadyStateGeneticAlgorithm<S extends Solution<?>> extends Abstr
 
     @Override
     protected List<S> replacement(List<S> population, List<S> offspringPopulation) {
+        System.out.println("replacement");
         Collections.sort(population, comparator);
         int worstSolutionIndex = population.size() - 1;
         if (comparator.compare(population.get(worstSolutionIndex), offspringPopulation.get(0)) > 0) {
+            tree.removeSolution(population.get(worstSolutionIndex));
+            System.out.println("TREE AFTER REMOVING");
+            tree.printTree();
+            tree.addSolution(offspringPopulation.get(0));
+            System.out.println("TREE AFTER ADDING");
+            tree.printTree();
             population.remove(worstSolutionIndex);
             population.add(offspringPopulation.get(0));
-
-            // TODO change KDTree if necessary
-            tree.removeSolution(population.get(worstSolutionIndex));
-            tree.addSolution(offspringPopulation.get(0));
         }
-
-
         return population;
     }
 
@@ -100,19 +100,10 @@ public class OurSteadyStateGeneticAlgorithm<S extends Solution<?>> extends Abstr
     protected List<S> selection(List<S> population) {
         List<S> matingPopulation = new ArrayList<>(2);
 
-        for (int i = 0; i < 2; i++) {
-            S solution = selectionOperator.execute(population);
-            matingPopulation.add(solution);
-        }
-
-
-        //TODO change way of choosing matings:
-        // one random, one from kdtree
-        /*
         S solution = selectionOperator.execute(population);
         matingPopulation.add(solution);
-        matingPopulation.add(tree.getFarSolution(solution));
-        */
+        matingPopulation.add((S) tree.distanced(tree.findInTree(solution)).getSolution());
+        System.out.println("selected");
         return matingPopulation;
     }
 
@@ -122,32 +113,14 @@ public class OurSteadyStateGeneticAlgorithm<S extends Solution<?>> extends Abstr
             tree.createTree(population);
             tree.printTree();
 
-            System.out.println(tree.distanced(tree.getRoot()));
-            //tree.removeSolution(population.get(0));
-            //System.out.println(tree.findMin());
-            //tree.removeSolution(tree.findMin().getSolution());
-            //System.out.println(tree);
         }
-
-
 
         OurSolutionComparator comparator = new OurSolutionComparator();
-//        comparator.setDepth(2);
         population.sort(comparator);
-//        System.out.println(population);
 
-
-
-
-        //    int i = 0;
         for (S solution : population) {
-//      LOGGER.info(solution.toString());
-//      LOGGER.info(Integer.toString(population.size()).concat(" evaluate ").concat(Integer.toString(i)));
-//      i += 1;
-//      System.out.println(solution);
             getProblem().evaluate(solution);
         }
-
         return population;
     }
 

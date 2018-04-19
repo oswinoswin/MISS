@@ -8,21 +8,21 @@ public interface IKDTree {
 
     void addSolution(Solution s);
 
-    Solution getFarSolution(Solution solution);
-
     boolean isEmpty();
 
     <S extends Solution<?>> void createTree(List<S> population);
 
+//    KDNode findMin();
+//    KDNode findMin(KDNode rootNode, int dimension);
 
-    KDNode findMin();
-
+    KDNode findInTree(Solution solution);
 
     void printTree();
 
+    KDNode getRoot();
+
     int findHeight(KDNode node);
 
-    KDNode getRoot();
     KDNode distanced(KDNode kdNode);
 
 }
