@@ -6,7 +6,7 @@ import java.util.List;
 public class KDTree<S extends Solution<?>> implements IKDTree {
 
     public KDNode root;
-    private OurSolutionComparator solutionComparator = new OurSolutionComparator();
+    private OurSolutionComparator solutionComparator = new OurSolutionComparator(2);
 
 
     @Override
@@ -147,6 +147,8 @@ public class KDTree<S extends Solution<?>> implements IKDTree {
     public void addSolution(Solution s) {
         if(this.isEmpty()){
             root = new KDNode(s, 0);
+            solutionComparator.setDepth(root.depth);
+
         }
         else{
             this.root.addChild(s);

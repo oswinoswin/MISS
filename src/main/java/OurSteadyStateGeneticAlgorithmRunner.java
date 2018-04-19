@@ -28,7 +28,7 @@ public class OurSteadyStateGeneticAlgorithmRunner {
         KDTreeSelection<DoubleSolution> selectionOperator = new KDTreeSelection<DoubleSolution>();
 
         int populationSize = 3;
-        int maxEvaluations = 5;
+        int maxEvaluations = 50;
 
         algorithm = new OurSteadyStateGeneticAlgorithm<>(problem, populationSize, maxEvaluations, crossoverOperator, mutationOperator);
 //                new GeneticAlgorithmBuilder<DoubleSolution>(problem, crossoverOperator, mutationOperator)

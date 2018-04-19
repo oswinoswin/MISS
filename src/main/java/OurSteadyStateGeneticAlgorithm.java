@@ -131,7 +131,7 @@ public class OurSteadyStateGeneticAlgorithm<S extends Solution<?>> extends Abstr
 
 
 
-        OurSolutionComparator comparator = new OurSolutionComparator();
+        OurSolutionComparator comparator = new OurSolutionComparator(2);
 //        comparator.setDepth(2);
         population.sort(comparator);
 //        System.out.println(population);
