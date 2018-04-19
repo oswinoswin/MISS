@@ -6,7 +6,7 @@ import java.util.List;
 public class KDTree<S extends Solution<?>> implements IKDTree {
 
     private KDNode root;
-    private OurSolutionComparator solutionComparator = new OurSolutionComparator();
+    private OurSolutionComparator solutionComparator = new OurSolutionComparator(0);
 
     public KDTree() {
     }
@@ -42,16 +42,6 @@ public class KDTree<S extends Solution<?>> implements IKDTree {
         }
     }
 
-
-    // Add solution to tree
-    @Override
-    public void addSolution(Solution s) {
-        if (this.isEmpty()) {
-            root = new KDNode(s, 0);
-        } else {
-            this.root.addChild(s);
-        }
-    }
 
     // Remove solution from tree
     //TODO
@@ -131,13 +121,13 @@ public class KDTree<S extends Solution<?>> implements IKDTree {
             return null;
         }
         if(kdNode == root){
-            if(findHeight(root.left) < findHeight(root.right)){
-                return goLeft(root, kdNode.depth);
+            if(findHeight(root.getLeft()) < findHeight(root.getRight())){
+                return goLeft(root, kdNode.getDepth());
             }
         }
         //node is in root right subtree
-        if(Double.parseDouble(root.solution.getVariableValueString(0)) < Double.parseDouble(kdNode.solution.getVariableValueString(0))){
-            return goLeft(root, kdNode.depth);
+        if(Double.parseDouble(root.getSolution().getVariableValueString(0)) < Double.parseDouble(kdNode.getSolution().getVariableValueString(0))){
+            return goLeft(root, kdNode.getDepth());
         }
         return goRight(root);
     }
@@ -148,7 +138,7 @@ public class KDTree<S extends Solution<?>> implements IKDTree {
             return 0;
         }
         else{
-            return 1 + Math.max(findHeight(node.left),findHeight(node.right));
+            return 1 + Math.max(findHeight(node.getLeft()),findHeight(node.getRight()));
         }
     }
 
@@ -156,8 +146,8 @@ public class KDTree<S extends Solution<?>> implements IKDTree {
         if(node == null){
             return null;
         }
-        while (node.right != null){
-            node = node.right;
+        while (node.getRight() != null){
+            node = node.getRight();
         }
         return node;
     }
@@ -165,8 +155,8 @@ public class KDTree<S extends Solution<?>> implements IKDTree {
         if(node == null){
             return null;
         }
-        while (node.right != null && steps > 0 ){
-            node = node.right;
+        while (node.getRight() != null && steps > 0 ){
+            node = node.getRight();
             steps--;
         }
         return node;
@@ -176,8 +166,8 @@ public class KDTree<S extends Solution<?>> implements IKDTree {
         if(node == null){
             return null;
         }
-        while (node.left != null){
-            node = node.left;
+        while (node.getLeft() != null){
+            node = node.getLeft();
         }
         return node;
     }
@@ -186,8 +176,8 @@ public class KDTree<S extends Solution<?>> implements IKDTree {
         if(node == null){
             return null;
         }
-        while (node.left != null && steps > 0 ){
-            node = node.left;
+        while (node.getLeft() != null && steps > 0 ){
+            node = node.getLeft();
             steps--;
         }
         return node;
@@ -196,28 +186,6 @@ public class KDTree<S extends Solution<?>> implements IKDTree {
     public KDNode getRoot(){
         return this.root;
     }
-
-
-
-    @Override
-    public void removeSolution(Solution s) {
-        KDNode toRemove = this.findInTree(s);
-        if ( toRemove == null){
-            return;
-        }
-
-        if (toRemove == this.root){
-            //TODO
-        }
-
-        else{
-            KDNode parent = this.findParent(toRemove);
-            if( parent.right == toRemove){
-                parent.removeRightChild();
-            }else {
-                parent.removeLeftChild();
-            }
-        }
 
     // Other functions
     private boolean equalSolutions(Solution solution1, Solution solution2){
@@ -312,7 +280,7 @@ public class KDTree<S extends Solution<?>> implements IKDTree {
     public void addSolution(Solution s) {
         if(this.isEmpty()){
             root = new KDNode(s, 0);
-            solutionComparator.setDepth(root.depth);
+            solutionComparator.setDepth(root.getDepth());
 
         }
         else{
@@ -321,26 +289,8 @@ public class KDTree<S extends Solution<?>> implements IKDTree {
     }
 
     @Override
-    public Solution getFarSolution(Solution solution) {
-        //TODO
-        if(this.root == null){
-            throw new JMetalException("The solution tree is null") ;
-        } else if (this.isEmpty()) {
-            throw new JMetalException("The solution tree is empty") ;
-        }
-
-        return null;
-    }
-
-    @Override
     public boolean isEmpty() {
         return root == null;
-    }
-
-    // Getters
-
-    public KDNode getRoot() {
-        return this.root;
     }
 
     // Printing

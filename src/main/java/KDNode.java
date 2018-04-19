@@ -10,7 +10,7 @@ class KDNode {
     private KDNode right;
     private int depth;
     private int dimensions;
-    private OurSolutionComparator solutionComparator = new OurSolutionComparator();
+    private OurSolutionComparator solutionComparator = new OurSolutionComparator(0);
 
 
     public KDNode getLeft() {
