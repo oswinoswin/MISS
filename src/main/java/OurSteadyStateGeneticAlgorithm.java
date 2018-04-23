@@ -10,32 +10,21 @@ import java.util.*;
 import java.util.logging.Logger;
 
 
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
 public class OurSteadyStateGeneticAlgorithm<S extends Solution<?>> extends AbstractGeneticAlgorithm<S, S> {
     private Comparator<S> comparator;
     private int maxEvaluations;
     private int evaluations;
     private IKDTree tree;
+    List<String> lines;
 
 
     private final static Logger LOGGER = Logger.getLogger(OurSteadyStateGeneticAlgorithm.class.getName());
 
-    /**
-     * Constructor
-     */
-//  public OurSteadyStateGeneticAlgorithm(Problem<S> problem, int maxEvaluations, int populationSize,
-//                                        CrossoverOperator<S> crossoverOperator, MutationOperator<S> mutationOperator,
-//                                        SelectionOperator<List<S>, S> selectionOperator) {
-//    super(problem);
-//    setMaxPopulationSize(populationSize);
-//    this.maxEvaluations = maxEvaluations;
-//
-//    this.crossoverOperator = crossoverOperator;
-//    this.mutationOperator = mutationOperator;
-//    this.selectionOperator = selectionOperator;
-//
-//    comparator = new ObjectiveComparator<S>(0);
-//
-//  }
     public OurSteadyStateGeneticAlgorithm(Problem<S> problem, int maxEvaluations, int populationSize,
                                           CrossoverOperator<S> crossoverOperator, MutationOperator<S> mutationOperator) {
         super(problem);
@@ -46,13 +35,10 @@ public class OurSteadyStateGeneticAlgorithm<S extends Solution<?>> extends Abstr
         this.mutationOperator = mutationOperator;
 
         this.selectionOperator = new RandomSelection<>();
-        // TODO
         this.tree = new KDTree<>();
 
         comparator = new ObjectiveComparator<S>(0);
-
-//    LOGGER.setLevel(Level.INFO);
-//    LOGGER.info("constructor");
+        this.lines = new ArrayList<>();
 
     }
 
@@ -64,20 +50,14 @@ public class OurSteadyStateGeneticAlgorithm<S extends Solution<?>> extends Abstr
 
     @Override
     protected List<S> replacement(List<S> population, List<S> offspringPopulation) {
-//        System.out.println("replacement");
         Collections.sort(population, comparator);
         int worstSolutionIndex = population.size() - 1;
         if (comparator.compare(population.get(worstSolutionIndex), offspringPopulation.get(0)) > 0) {
             tree.removeSolution(population.get(worstSolutionIndex));
-//            System.out.println("TREE AFTER REMOVING");
-//            tree.printTree();
             tree.addSolution(offspringPopulation.get(0));
-//            System.out.println("TREE AFTER ADDING");
-//            tree.printTree();
             population.remove(worstSolutionIndex);
             population.add(offspringPopulation.get(0));
         }
-        System.out.println(String.format("%d FITNESS: %.16f, %.16f",evaluations, fitness(), metric()));
         return population;
     }
 
@@ -108,10 +88,12 @@ public class OurSteadyStateGeneticAlgorithm<S extends Solution<?>> extends Abstr
 
     @Override
     protected List<S> evaluatePopulation(List<S> population) {
+        System.out.println("FITNESS: "+ this.getResult().getObjective(0) + " ITERATIONS: " + this.evaluations );
+        lines.add(this.evaluations + ", " + this.getResult().getObjective(0));
         if (tree.isEmpty()) {
             tree.createTree(population);
-//            tree.printTree();
-
+            System.out.println("Evaluations: " + evaluations);
+            System.out.println("Distanced: " + tree.distanced(tree.getRoot()));
         }
 
         OurSolutionComparator comparator = new OurSolutionComparator();
@@ -139,6 +121,16 @@ public class OurSteadyStateGeneticAlgorithm<S extends Solution<?>> extends Abstr
     @Override
     public void updateProgress() {
         evaluations++;
+        if(evaluations == maxEvaluations){
+            System.out.println("Finished!");
+            System.out.println(lines);
+            try{
+                Path file = Paths.get("the-file-name.txt");
+                Files.write(file, lines, Charset.forName("UTF-8"));
+            }catch (Exception e){
+                System.out.println("Can't write to file");
+            }
+        }
     }
 
     @Override
@@ -185,7 +177,7 @@ public class OurSteadyStateGeneticAlgorithm<S extends Solution<?>> extends Abstr
 
     private S getBest(){
         Random generator = new Random();
-        int i = generator.nextInt(getMaxPopulationSize()/5);
+        int i = generator.nextInt(getMaxPopulationSize()/5) + 1;
         Collections.sort(getPopulation(), comparator);
         return getPopulation().get(i);
     }

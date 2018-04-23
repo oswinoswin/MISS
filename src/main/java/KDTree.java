@@ -6,7 +6,16 @@ import java.util.List;
 public class KDTree<S extends Solution<?>> implements IKDTree {
 
     private KDNode root;
-    private OurSolutionComparator solutionComparator = new OurSolutionComparator();
+    private OurSolutionComparator solutionComparator = new OurSolutionComparator(0);
+
+    public KDTree() {
+    }
+
+    public KDTree(KDNode root) {
+        this.root = root;
+    }
+
+    // Create tree
 
     public KDTree() {
     }
@@ -47,16 +56,13 @@ public class KDTree<S extends Solution<?>> implements IKDTree {
     //TODO
     @Override
     public void removeSolution(Solution s) {
-        this.root = removeSolution(this.root, s);
+
+      this.root = removeSolution(this.root, s);
     }
 
     private KDNode removeSolution(KDNode rootNode, Solution toRemove) {
         if (rootNode == null){
-            System.out.println(toRemove);
             return null;
-        }
-        if (toRemove == null){
-            System.out.println("nulllll");
         }
         if (equalSolutions(rootNode.getSolution(), toRemove)) {
             if (rootNode.getRight() != null){

@@ -1,16 +1,16 @@
 import org.uma.jmetal.algorithm.Algorithm;
+import org.uma.jmetal.algorithm.singleobjective.geneticalgorithm.GeneticAlgorithmBuilder;
 import org.uma.jmetal.operator.CrossoverOperator;
 import org.uma.jmetal.operator.MutationOperator;
-import org.uma.jmetal.operator.SelectionOperator;
 import org.uma.jmetal.operator.impl.crossover.SBXCrossover;
 import org.uma.jmetal.operator.impl.mutation.PolynomialMutation;
+import org.uma.jmetal.operator.impl.selection.BinaryTournamentSelection;
+import org.uma.jmetal.operator.impl.selection.RandomSelection;
 import org.uma.jmetal.problem.DoubleProblem;
 import org.uma.jmetal.problem.singleobjective.Rastrigin;
 import org.uma.jmetal.solution.DoubleSolution;
 import org.uma.jmetal.util.AlgorithmRunner;
 import org.uma.jmetal.util.JMetalLogger;
-import org.uma.jmetal.util.fileoutput.SolutionListOutput;
-import org.uma.jmetal.util.fileoutput.impl.DefaultFileOutputContext;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,8 +26,6 @@ public class OurSteadyStateGeneticAlgorithmRunner {
                 new SBXCrossover(0.9, 20.0);
         MutationOperator<DoubleSolution> mutationOperator =
                 new PolynomialMutation(1.0 / problem.getNumberOfVariables(), 20.0);
-//        SelectionOperator<List<DoubleSolution>, DoubleSolution> selectionOperator = new KDTreeSelection<>();
-
         int populationSize = 30;
         int maxEvaluations = 100;
 
@@ -48,11 +46,6 @@ public class OurSteadyStateGeneticAlgorithmRunner {
         List<DoubleSolution> population = new ArrayList<>(1);
         population.add(solution);
 
-        new SolutionListOutput(population)
-                .setSeparator("\t")
-                .setVarFileOutputContext(new DefaultFileOutputContext("VAR.tsv"))
-                .setFunFileOutputContext(new DefaultFileOutputContext("FUN.tsv"))
-                .print();
 
         JMetalLogger.logger.info("Total execution time: " + computingTime + "ms");
         JMetalLogger.logger.info("Objectives values have been written to file FUN.tsv");
