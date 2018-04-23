@@ -100,11 +100,9 @@ public class OurSteadyStateGeneticAlgorithm<S extends Solution<?>> extends Abstr
     protected List<S> selection(List<S> population) {
         List<S> matingPopulation = new ArrayList<>(2);
 
-//        S solution = selectionOperator.execute(population);
         S solution = getBest();
         matingPopulation.add(solution);
         matingPopulation.add((S) tree.distanced(solution));
-//        System.out.println("selected");
         return matingPopulation;
     }
 
@@ -116,7 +114,7 @@ public class OurSteadyStateGeneticAlgorithm<S extends Solution<?>> extends Abstr
 
         }
 
-        OurSolutionComparator comparator = new OurSolutionComparator(0);
+        OurSolutionComparator comparator = new OurSolutionComparator();
         population.sort(comparator);
 
         for (S solution : population) {

@@ -6,8 +6,7 @@ import java.util.Comparator;
 public class OurSolutionComparator implements Comparator<Solution> {
     private int depth = 0;
 
-    public OurSolutionComparator(int dimension) {
-        this.dimension = dimension;
+    public OurSolutionComparator() {
     }
 
     private int dimension;
@@ -21,6 +20,7 @@ public class OurSolutionComparator implements Comparator<Solution> {
 
     @Override
     public int compare(Solution o1, Solution o2) {
+        dimension = o1.getNumberOfVariables();
         return Double.compare(Double.parseDouble(o1.getVariableValueString(depth%dimension)), Double.parseDouble(o2.getVariableValueString(depth%dimension)));
     }
 }

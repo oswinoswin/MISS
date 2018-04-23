@@ -6,7 +6,7 @@ import java.util.List;
 public class KDTree<S extends Solution<?>> implements IKDTree {
 
     private KDNode root;
-    private OurSolutionComparator solutionComparator = new OurSolutionComparator(0);
+    private OurSolutionComparator solutionComparator = new OurSolutionComparator();
 
     public KDTree() {
     }
