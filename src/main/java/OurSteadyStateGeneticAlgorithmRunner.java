@@ -1,15 +1,16 @@
 import org.uma.jmetal.algorithm.Algorithm;
+import org.uma.jmetal.algorithm.singleobjective.geneticalgorithm.GeneticAlgorithmBuilder;
 import org.uma.jmetal.operator.CrossoverOperator;
 import org.uma.jmetal.operator.MutationOperator;
 import org.uma.jmetal.operator.impl.crossover.SBXCrossover;
 import org.uma.jmetal.operator.impl.mutation.PolynomialMutation;
+import org.uma.jmetal.operator.impl.selection.BinaryTournamentSelection;
+import org.uma.jmetal.operator.impl.selection.RandomSelection;
 import org.uma.jmetal.problem.DoubleProblem;
 import org.uma.jmetal.problem.singleobjective.Rastrigin;
 import org.uma.jmetal.solution.DoubleSolution;
 import org.uma.jmetal.util.AlgorithmRunner;
 import org.uma.jmetal.util.JMetalLogger;
-import org.uma.jmetal.util.fileoutput.SolutionListOutput;
-import org.uma.jmetal.util.fileoutput.impl.DefaultFileOutputContext;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,10 +28,10 @@ public class OurSteadyStateGeneticAlgorithmRunner {
                 new PolynomialMutation(1.0 / problem.getNumberOfVariables(), 20.0);
         KDTreeSelection<DoubleSolution> selectionOperator = new KDTreeSelection<DoubleSolution>();
 
-        int populationSize = 3;
-        int maxEvaluations = 4;
+        int populationSize = 30;
+        int maxEvaluations = 50;
 
-        algorithm = new OurSteadyStateGeneticAlgorithm<>(problem, populationSize, maxEvaluations, crossoverOperator, mutationOperator);
+        algorithm = new OurSteadyStateGeneticAlgorithm<>(problem, maxEvaluations, populationSize, crossoverOperator, mutationOperator);
 //                new GeneticAlgorithmBuilder<DoubleSolution>(problem, crossoverOperator, mutationOperator)
 //                .setPopulationSize(100)
 //                .setMaxEvaluations(25000)
@@ -47,11 +48,6 @@ public class OurSteadyStateGeneticAlgorithmRunner {
         List<DoubleSolution> population = new ArrayList<>(1);
         population.add(solution);
 
-        new SolutionListOutput(population)
-                .setSeparator("\t")
-                .setVarFileOutputContext(new DefaultFileOutputContext("VAR.tsv"))
-                .setFunFileOutputContext(new DefaultFileOutputContext("FUN.tsv"))
-                .print();
 
         JMetalLogger.logger.info("Total execution time: " + computingTime + "ms");
         JMetalLogger.logger.info("Objectives values have been written to file FUN.tsv");
