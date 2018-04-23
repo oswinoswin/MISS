@@ -6,21 +6,16 @@ import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.solution.Solution;
 import org.uma.jmetal.util.comparator.ObjectiveComparator;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 import java.util.logging.Logger;
 
-/**
- * @author Antonio J. Nebro <antonio@lcc.uma.es>
- */
-@SuppressWarnings("serial")
+
 public class OurSteadyStateGeneticAlgorithm<S extends Solution<?>> extends AbstractGeneticAlgorithm<S, S> {
     private Comparator<S> comparator;
     private int maxEvaluations;
     private int evaluations;
     private IKDTree tree;
+
 
     private final static Logger LOGGER = Logger.getLogger(OurSteadyStateGeneticAlgorithm.class.getName());
 
@@ -50,7 +45,6 @@ public class OurSteadyStateGeneticAlgorithm<S extends Solution<?>> extends Abstr
         this.crossoverOperator = crossoverOperator;
         this.mutationOperator = mutationOperator;
 
-
         this.selectionOperator = new RandomSelection<>();
         // TODO
         this.tree = new KDTree<>();
@@ -70,18 +64,20 @@ public class OurSteadyStateGeneticAlgorithm<S extends Solution<?>> extends Abstr
 
     @Override
     protected List<S> replacement(List<S> population, List<S> offspringPopulation) {
+//        System.out.println("replacement");
         Collections.sort(population, comparator);
         int worstSolutionIndex = population.size() - 1;
         if (comparator.compare(population.get(worstSolutionIndex), offspringPopulation.get(0)) > 0) {
+            tree.removeSolution(population.get(worstSolutionIndex));
+//            System.out.println("TREE AFTER REMOVING");
+//            tree.printTree();
+            tree.addSolution(offspringPopulation.get(0));
+//            System.out.println("TREE AFTER ADDING");
+//            tree.printTree();
             population.remove(worstSolutionIndex);
             population.add(offspringPopulation.get(0));
-
-            // TODO change KDTree if necessary
-            tree.removeSolution(population.get(worstSolutionIndex));
-            tree.addSolution(offspringPopulation.get(0));
         }
-
-
+        System.out.println(String.format("%d FITNESS: %.16f, %.16f",evaluations, fitness(), metric()));
         return population;
     }
 
@@ -104,19 +100,11 @@ public class OurSteadyStateGeneticAlgorithm<S extends Solution<?>> extends Abstr
     protected List<S> selection(List<S> population) {
         List<S> matingPopulation = new ArrayList<>(2);
 
-        for (int i = 0; i < 2; i++) {
-            S solution = selectionOperator.execute(population);
-            matingPopulation.add(solution);
-        }
-
-
-        //TODO change way of choosing matings:
-        // one random, one from kdtree
-        /*
-        S solution = selectionOperator.execute(population);
+//        S solution = selectionOperator.execute(population);
+        S solution = getBest();
         matingPopulation.add(solution);
-        matingPopulation.add(tree.getFarSolution(solution));
-        */
+        matingPopulation.add((S) tree.distanced(solution));
+//        System.out.println("selected");
         return matingPopulation;
     }
 
@@ -124,33 +112,24 @@ public class OurSteadyStateGeneticAlgorithm<S extends Solution<?>> extends Abstr
     protected List<S> evaluatePopulation(List<S> population) {
         if (tree.isEmpty()) {
             tree.createTree(population);
-            System.out.println(tree);
+//            tree.printTree();
+
         }
 
-
-        OurSolutionComparator comparator = new KSolutionComparator();
-//        comparator.setDepth(2);
+        OurSolutionComparator comparator = new OurSolutionComparator(0);
         population.sort(comparator);
-//        System.out.println(population);
 
-
-
-
-        //    int i = 0;
         for (S solution : population) {
-//      LOGGER.info(solution.toString());
-//      LOGGER.info(Integer.toString(population.size()).concat(" evaluate ").concat(Integer.toString(i)));
-//      i += 1;
-//      System.out.println(solution);
             getProblem().evaluate(solution);
         }
-
         return population;
     }
 
     @Override
     public S getResult() {
         Collections.sort(getPopulation(), comparator);
+        //TODO
+        //save results to file!
         return getPopulation().get(0);
     }
 
@@ -172,5 +151,44 @@ public class OurSteadyStateGeneticAlgorithm<S extends Solution<?>> extends Abstr
     @Override
     public String getDescription() {
         return "Steady-State Genetic Algorithm";
+    }
+
+    private double metric(){
+        int size = getProblem().getNumberOfVariables();
+        int popSize = getPopulation().size();
+        double[] tmp = new double[size];
+        double[] std = new double[size];
+        Arrays.fill(tmp, 0);
+        Arrays.fill(std, 0);
+        //dodajemy wszystkie wartości
+        for (S s : getPopulation()){
+            for (int i=0; i<size; i++){
+                tmp[i] += Double.parseDouble(s.getVariableValueString(i));
+            }
+        }
+        //liczymy średnią
+        for (int i = 0; i<size; i++){
+            tmp[i] /= popSize;
+        }
+        //obliczamy sume do std
+        for (S s : getPopulation()){
+            for (int i=0; i<size; i++){
+                std[i] += Math.pow(Double.parseDouble(s.getVariableValueString(i)) - tmp[i], 2);
+            }
+        }
+        Arrays.sort(std);
+        return Math.sqrt(std[0]);
+    }
+
+    private double fitness(){
+        Collections.sort(getPopulation(), comparator);
+        return getPopulation().get(0).getObjective(0);
+    }
+
+    private S getBest(){
+        Random generator = new Random();
+        int i = generator.nextInt(getMaxPopulationSize()/5);
+        Collections.sort(getPopulation(), comparator);
+        return getPopulation().get(i);
     }
 }
