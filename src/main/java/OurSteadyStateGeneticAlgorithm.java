@@ -70,11 +70,11 @@ public class OurSteadyStateGeneticAlgorithm<S extends Solution<?>> extends Abstr
         int worstSolutionIndex = population.size() - 1;
         if (comparator.compare(population.get(worstSolutionIndex), offspringPopulation.get(0)) > 0) {
             tree.removeSolution(population.get(worstSolutionIndex));
-            System.out.println("TREE AFTER REMOVING");
-            tree.printTree();
+//            System.out.println("TREE AFTER REMOVING");
+//            tree.printTree();
             tree.addSolution(offspringPopulation.get(0));
-            System.out.println("TREE AFTER ADDING");
-            tree.printTree();
+//            System.out.println("TREE AFTER ADDING");
+//            tree.printTree();
             population.remove(worstSolutionIndex);
             population.add(offspringPopulation.get(0));
         }
@@ -102,7 +102,7 @@ public class OurSteadyStateGeneticAlgorithm<S extends Solution<?>> extends Abstr
 
         S solution = selectionOperator.execute(population);
         matingPopulation.add(solution);
-        matingPopulation.add((S) tree.distanced(tree.findInTree(solution)).getSolution());
+        matingPopulation.add((S) tree.distanced(solution));
         System.out.println("selected");
         return matingPopulation;
     }
@@ -127,6 +127,8 @@ public class OurSteadyStateGeneticAlgorithm<S extends Solution<?>> extends Abstr
     @Override
     public S getResult() {
         Collections.sort(getPopulation(), comparator);
+        //TODO
+        //save results to file!
         return getPopulation().get(0);
     }
 

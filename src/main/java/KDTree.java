@@ -55,9 +55,9 @@ public class KDTree<S extends Solution<?>> implements IKDTree {
     }
 
     private KDNode removeSolution(KDNode rootNode, Solution toRemove) {
-        System.out.println("\n\nremoving " + toRemove + " from " + rootNode + "\n\n");
+//        System.out.println("\n\nremoving " + toRemove + " from " + rootNode + "\n\n");
         if (rootNode == null){
-            System.out.println("chce usunac cos czego nie ma w drzewie?");
+//            System.out.println("chce usunac cos czego nie ma w drzewie?");
             System.out.println(toRemove);
             return null;
         }
@@ -67,7 +67,7 @@ public class KDTree<S extends Solution<?>> implements IKDTree {
         if (equalSolutions(rootNode.getSolution(), toRemove)) {
             if (rootNode.getRight() != null){
                 KDNode min = findMin(rootNode.getRight(), rootNode.getDepth() % rootNode.getDimensions());
-                System.out.println("RMIN " + min.getSolution());
+//                System.out.println("RMIN " + min.getSolution());
                 rootNode.setSolution(min.getSolution());
                 min = removeSolution(rootNode.getRight(), min.getSolution());
                 rootNode.setRight(min);
@@ -75,20 +75,20 @@ public class KDTree<S extends Solution<?>> implements IKDTree {
                 KDNode max = findMax(rootNode.getLeft(), rootNode.getDepth() % rootNode.getDimensions());
                 System.out.println(rootNode.getDepth() % rootNode.getDimensions());
                 rootNode.setSolution(max.getSolution());
-                System.out.println("LMAX " + max.getSolution());
+//                System.out.println("LMAX " + max.getSolution());
                 max = removeSolution(rootNode.getLeft(), max.getSolution());
                 rootNode.setLeft(max);
             } else {
                 return null;
             }
-            System.out.println("REMOVED");
+//            System.out.println("REMOVED");
             return rootNode;
         } else {
             if (Double.parseDouble(rootNode.getSolution().getVariableValueString(rootNode.getDepth()%rootNode.getDimensions())) > Double.parseDouble(toRemove.getVariableValueString(rootNode.getDepth()%rootNode.getDimensions()))){
-                System.out.println("LEFT " + rootNode);
+//                System.out.println("LEFT " + rootNode);
                 rootNode.setLeft(removeSolution(rootNode.getLeft(), toRemove));
             } else {
-                System.out.println("RIGHT " + rootNode);
+//                System.out.println("RIGHT " + rootNode);
                 rootNode.setRight(removeSolution(rootNode.getRight(), toRemove));
             }
         }
@@ -97,6 +97,28 @@ public class KDTree<S extends Solution<?>> implements IKDTree {
     }
 
     // Get distanced node
+
+    @Override
+    public Solution distanced(Solution solution){
+        return distanced(solution, root).getSolution();
+    }
+
+    private KDNode distanced(Solution solution, KDNode rootNode){
+        if (rootNode == null){
+            return root;
+        }
+        int dim = rootNode.getDepth() % rootNode.getDimensions();
+        if (Double.parseDouble(solution.getVariableValueString(dim)) < Double.parseDouble(rootNode.getSolution().getVariableValueString(dim))){
+            if (rootNode.getRight() != null){
+                return distanced(solution, rootNode.getRight());
+            }
+        } else {
+            if (rootNode.getLeft() != null){
+                return distanced(solution, rootNode.getLeft());
+            }
+        }
+        return rootNode;
+    }
 
     @Override
     public KDNode distanced(KDNode kdNode) {

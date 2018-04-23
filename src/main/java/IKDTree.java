@@ -21,6 +21,7 @@ public interface IKDTree {
 
     KDNode getRoot();
     KDNode distanced(KDNode kdNode);//returns the edge node from another subtree
+    Solution distanced(Solution solution);
     KDNode distancedWithSteps(KDNode kdNode); //uses limited number of steps
 
 }
