@@ -13,7 +13,8 @@ public class KDTreeSelection<S extends Solution<?>>  implements SelectionOperato
             throw new JMetalException("The solution tree is empty") ;
         }
         //TODO find the best solution
+
         //Maybe do more selections with kdtree
-        return (S) skdTree.distanced(skdTree.getRoot()).solution;
+        return (S) skdTree.distanced(skdTree.getRoot()).getSolution();
     }
 }
