@@ -6,6 +6,10 @@ import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.solution.Solution;
 import org.uma.jmetal.util.comparator.ObjectiveComparator;
 
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -17,6 +21,7 @@ public class OurSteadyStateGeneticAlgorithm<S extends Solution<?>> extends Abstr
     private int maxEvaluations;
     private int evaluations;
     private IKDTree tree;
+    List<String> lines;
 
     private final static Logger LOGGER = Logger.getLogger(OurSteadyStateGeneticAlgorithm.class.getName());
 
@@ -52,6 +57,7 @@ public class OurSteadyStateGeneticAlgorithm<S extends Solution<?>> extends Abstr
         this.tree = new KDTree<>();
 
         comparator = new ObjectiveComparator<S>(0);
+        this.lines = new ArrayList<>();
 
 //    LOGGER.setLevel(Level.INFO);
 //    LOGGER.info("constructor");
@@ -118,11 +124,14 @@ public class OurSteadyStateGeneticAlgorithm<S extends Solution<?>> extends Abstr
 
     @Override
     protected List<S> evaluatePopulation(List<S> population) {
+        System.out.println("FITNESS: "+ this.getResult().getObjective(0) + " ITERATIONS: " + this.evaluations );
+        lines.add(this.evaluations + ", " + this.getResult().getObjective(0));
         if (tree.isEmpty()) {
             tree.createTree(population);
             tree.printTree();
+            System.out.println("Evaluations: " + evaluations);
+            System.out.println("Distanced: " + tree.distanced(tree.getRoot()));
 
-            System.out.println(tree.distanced(tree.getRoot()));
             //tree.removeSolution(population.get(0));
             //System.out.println(tree.findMin());
             //tree.removeSolution(tree.findMin().getSolution());
@@ -165,6 +174,16 @@ public class OurSteadyStateGeneticAlgorithm<S extends Solution<?>> extends Abstr
     @Override
     public void updateProgress() {
         evaluations++;
+        if(evaluations == maxEvaluations){
+            System.out.println("Finished!");
+            System.out.println(lines);
+            try{
+                Path file = Paths.get("the-file-name.txt");
+                Files.write(file, lines, Charset.forName("UTF-8"));
+            }catch (Exception e){
+                System.out.println("Can't write to file");
+            }
+        }
     }
 
     @Override
