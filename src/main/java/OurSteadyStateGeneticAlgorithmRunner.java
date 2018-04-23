@@ -28,10 +28,10 @@ public class OurSteadyStateGeneticAlgorithmRunner {
                 new PolynomialMutation(1.0 / problem.getNumberOfVariables(), 20.0);
 //        SelectionOperator<List<DoubleSolution>, DoubleSolution> selectionOperator = new KDTreeSelection<>();
 
-        int populationSize = 3;
-        int maxEvaluations = 4;
+        int populationSize = 30;
+        int maxEvaluations = 100;
 
-        algorithm = new OurSteadyStateGeneticAlgorithm<>(problem, populationSize, maxEvaluations, crossoverOperator, mutationOperator);
+        algorithm = new OurSteadyStateGeneticAlgorithm<>(problem, maxEvaluations, populationSize, crossoverOperator, mutationOperator);
 //                new GeneticAlgorithmBuilder<DoubleSolution>(problem, crossoverOperator, mutationOperator)
 //                .setPopulationSize(100)
 //                .setMaxEvaluations(25000)
