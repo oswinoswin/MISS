@@ -23,9 +23,11 @@ public class OurSteadyStateGeneticAlgorithm<S extends Solution<?>> extends Abstr
 
     private final static Logger LOGGER = Logger.getLogger(OurSteadyStateGeneticAlgorithm.class.getName());
 
+
     /**
      * Constructor
      */
+
     public OurSteadyStateGeneticAlgorithm(Problem<S> problem, int maxEvaluations, int populationSize,
                                           CrossoverOperator<S> crossoverOperator, MutationOperator<S> mutationOperator,
                                           OurCSVWriter writer, boolean bestSelect, int rebuild) {
@@ -106,6 +108,7 @@ public class OurSteadyStateGeneticAlgorithm<S extends Solution<?>> extends Abstr
         }
 
         OurSolutionComparator comparator = new OurSolutionComparator();
+
         population.sort(comparator);
 
         for (S solution : population) {

@@ -1,5 +1,4 @@
 import org.uma.jmetal.solution.Solution;
-import org.uma.jmetal.util.JMetalException;
 
 import java.util.List;
 import java.util.Random;
@@ -7,8 +6,10 @@ import java.util.Random;
 public class KDTree<S extends Solution<?>> implements IKDTree {
 
     private KDNode root;
+
     private OurSolutionComparator solutionComparator = new OurSolutionComparator();
     private Random random = new Random();
+
     public KDTree() {
     }
 
@@ -50,7 +51,9 @@ public class KDTree<S extends Solution<?>> implements IKDTree {
     }
 
 
-        // Remove solution from tree
+
+    // Remove solution from tree
+
     @Override
     public void removeSolution(Solution s) {
         this.root = removeSolution(this.root, s);
@@ -86,20 +89,23 @@ public class KDTree<S extends Solution<?>> implements IKDTree {
 
     }
 
-    // Get distanced node
 
     @Override
+
     public Solution distanced(Solution solution){
         return distancedToTheEnd(solution, root).getSolution();
     }
 
     private KDNode distancedToTheEnd(Solution solution, KDNode rootNode){
+
         if (rootNode == null){
             return root;
         }
         int dim = rootNode.getDepth() % rootNode.getDimensions();
-        if (Double.parseDouble(solution.getVariableValueString(dim)) < Double.parseDouble(rootNode.getSolution().getVariableValueString(dim))){
+        if (Double.parseDouble(solution.getVariableValueString(dim)) < Double.parseDouble(rootNode.getSolution().getVariableValueString(dim))
+                && random >= randomnessFactor){
             if (rootNode.getRight() != null){
+
                 return distancedToTheEnd(solution, rootNode.getRight());
             }
         } else {

@@ -13,11 +13,11 @@ public interface IKDTree {
     <S extends Solution<?>> void createTree(List<S> population);
     <S extends Solution<?>> void rebuildTree(List<S> population);
 
+
     KDNode findInTree(Solution solution);
 
     void printTree();
 
     KDNode getRoot();
     Solution distanced(Solution solution);//returns the edge node from another subtree
-
 }

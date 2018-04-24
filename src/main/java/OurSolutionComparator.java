@@ -11,6 +11,10 @@ public class OurSolutionComparator implements Comparator<Solution> {
 
     private int dimension;
 
+    public OurSolutionComparator() {
+
+    }
+
     public void setDepth(int depth){
         this.depth = depth;
     }
