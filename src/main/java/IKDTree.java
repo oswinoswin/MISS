@@ -11,18 +11,13 @@ public interface IKDTree {
     boolean isEmpty();
 
     <S extends Solution<?>> void createTree(List<S> population);
-
-//    KDNode findMin();
-//    KDNode findMin(KDNode rootNode, int dimension);
+    <S extends Solution<?>> void rebuildTree(List<S> population);
 
     KDNode findInTree(Solution solution);
 
     void printTree();
 
     KDNode getRoot();
-    KDNode distanced(KDNode kdNode);//returns the edge node from another subtree
-
     Solution distanced(Solution solution);//returns the edge node from another subtree
-
 
 }

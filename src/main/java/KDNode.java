@@ -240,15 +240,6 @@ class KDNode {
     @Override
     public String toString(){
         return "" + this.solution;
-//        String leftString = "";
-//        String rightString = "";
-//        if (left != null){
-//            leftString = left.toString();
-//        }
-//        if (right != null){
-//            rightString = right.toString();
-//        }
-//        return "&" +  this.solution + "" + leftString + "*" + rightString;
     }
 
     private boolean equalSolutions(Solution s1, Solution s2){
@@ -260,7 +251,6 @@ class KDNode {
         return true;
 
     }
-
 
     public Solution getSolution(){
         return this.solution;

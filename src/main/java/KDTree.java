@@ -2,21 +2,13 @@ import org.uma.jmetal.solution.Solution;
 import org.uma.jmetal.util.JMetalException;
 
 import java.util.List;
+import java.util.Random;
 
 public class KDTree<S extends Solution<?>> implements IKDTree {
 
     private KDNode root;
-    private OurSolutionComparator solutionComparator = new OurSolutionComparator(0);
-
-    public KDTree() {
-    }
-
-    public KDTree(KDNode root) {
-        this.root = root;
-    }
-
-    // Create tree
-
+    private OurSolutionComparator solutionComparator = new OurSolutionComparator();
+    private Random random = new Random();
     public KDTree() {
     }
 
@@ -51,13 +43,17 @@ public class KDTree<S extends Solution<?>> implements IKDTree {
         }
     }
 
+    @Override
+    public <S extends Solution<?>> void rebuildTree(List<S> population) {
+        this.root = null;
+        createTree(population);
+    }
 
-    // Remove solution from tree
-    //TODO
+
+        // Remove solution from tree
     @Override
     public void removeSolution(Solution s) {
-
-      this.root = removeSolution(this.root, s);
+        this.root = removeSolution(this.root, s);
     }
 
     private KDNode removeSolution(KDNode rootNode, Solution toRemove) {
@@ -72,7 +68,6 @@ public class KDTree<S extends Solution<?>> implements IKDTree {
                 rootNode.setRight(min);
             } else if (rootNode.getLeft() != null){
                 KDNode max = findMax(rootNode.getLeft(), rootNode.getDepth() % rootNode.getDimensions());
-                System.out.println(rootNode.getDepth() % rootNode.getDimensions());
                 rootNode.setSolution(max.getSolution());
                 max = removeSolution(rootNode.getLeft(), max.getSolution());
                 rootNode.setLeft(max);
@@ -95,110 +90,43 @@ public class KDTree<S extends Solution<?>> implements IKDTree {
 
     @Override
     public Solution distanced(Solution solution){
-        return distanced(solution, root).getSolution();
+        return distancedToTheEnd(solution, root).getSolution();
     }
 
-    private KDNode distanced(Solution solution, KDNode rootNode){
+    private KDNode distancedToTheEnd(Solution solution, KDNode rootNode){
         if (rootNode == null){
             return root;
         }
         int dim = rootNode.getDepth() % rootNode.getDimensions();
         if (Double.parseDouble(solution.getVariableValueString(dim)) < Double.parseDouble(rootNode.getSolution().getVariableValueString(dim))){
             if (rootNode.getRight() != null){
-                return distanced(solution, rootNode.getRight());
+                return distancedToTheEnd(solution, rootNode.getRight());
             }
         } else {
             if (rootNode.getLeft() != null){
-                return distanced(solution, rootNode.getLeft());
+                return distancedToTheEnd(solution, rootNode.getLeft());
             }
         }
         return rootNode;
     }
 
-    @Override
-    public KDNode distanced(KDNode kdNode) {
-        if (kdNode == null) {
-            return null;
+    private KDNode distancedRandomStop(Solution solution, KDNode rootNode){
+        if (rootNode == null){
+            return root;
         }
-        if (kdNode == root) {
-            if (findHeight(root.getLeft()) < findHeight(root.getRight())) {
-                return goLeft(root);
+        int dim = rootNode.getDepth() % rootNode.getDimensions();
+        if (Double.parseDouble(solution.getVariableValueString(dim)) < Double.parseDouble(rootNode.getSolution().getVariableValueString(dim))){
+            if (rootNode.getRight() != null && random.nextBoolean()){
+                return distancedRandomStop(solution, rootNode.getRight());
+            }
+        } else {
+            if (rootNode.getLeft() != null && random.nextBoolean()){
+                return distancedRandomStop(solution, rootNode.getLeft());
             }
         }
-        //node is in root right subtree
-        if (Double.parseDouble(root.getSolution().getVariableValueString(0)) < Double.parseDouble(kdNode.getSolution().getVariableValueString(0))) {
-            return goLeft(root);
-        }
-        return goRight(root);
+        return rootNode;
     }
 
-    @Override
-    public KDNode distancedWithSteps(KDNode kdNode) {
-        if(kdNode == null){
-            return null;
-        }
-        if(kdNode == root){
-            if(findHeight(root.getLeft()) < findHeight(root.getRight())){
-                return goLeft(root, kdNode.getDepth());
-            }
-        }
-        //node is in root right subtree
-        if(Double.parseDouble(root.getSolution().getVariableValueString(0)) < Double.parseDouble(kdNode.getSolution().getVariableValueString(0))){
-            return goLeft(root, kdNode.getDepth());
-        }
-        return goRight(root);
-    }
-
-    //finds height of a subtree
-    public int findHeight(KDNode node){
-        if(node == null){
-            return 0;
-        }
-        else{
-            return 1 + Math.max(findHeight(node.getLeft()),findHeight(node.getRight()));
-        }
-    }
-
-    private KDNode goRight(KDNode node){
-        if(node == null){
-            return null;
-        }
-        while (node.getRight() != null){
-            node = node.getRight();
-        }
-        return node;
-    }
-    private KDNode goRight(KDNode node, int steps){
-        if(node == null){
-            return null;
-        }
-        while (node.getRight() != null && steps > 0 ){
-            node = node.getRight();
-            steps--;
-        }
-        return node;
-    }
-
-    private KDNode goLeft(KDNode node){
-        if(node == null){
-            return null;
-        }
-        while (node.getLeft() != null){
-            node = node.getLeft();
-        }
-        return node;
-    }
-
-    private KDNode goLeft(KDNode node, int steps){
-        if(node == null){
-            return null;
-        }
-        while (node.getLeft() != null && steps > 0 ){
-            node = node.getLeft();
-            steps--;
-        }
-        return node;
-    }
 
     public KDNode getRoot(){
         return this.root;
@@ -287,10 +215,6 @@ public class KDTree<S extends Solution<?>> implements IKDTree {
             }
         }
         return res;
-    }
-
-    private KDNode traverseTree(Solution s, int depth) {
-        return null;
     }
 
     @Override
