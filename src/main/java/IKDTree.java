@@ -12,16 +12,13 @@ public interface IKDTree {
 
     <S extends Solution<?>> void createTree(List<S> population);
 
-//    KDNode findMin();
-//    KDNode findMin(KDNode rootNode, int dimension);
-
     KDNode findInTree(Solution solution);
 
     void printTree();
 
     KDNode getRoot();
     KDNode distanced(KDNode kdNode);//returns the edge node from another subtree
-    Solution distanced(Solution solution);
+    Solution distanced(Solution solution, double randomnessFactor);
     KDNode distancedWithSteps(KDNode kdNode); //uses limited number of steps
 
 }

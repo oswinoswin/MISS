@@ -1,12 +1,13 @@
 import org.uma.jmetal.solution.Solution;
-import org.uma.jmetal.util.JMetalException;
 
 import java.util.List;
+import java.util.Random;
 
 public class KDTree<S extends Solution<?>> implements IKDTree {
 
     private KDNode root;
     private OurSolutionComparator solutionComparator = new OurSolutionComparator(0);
+    private Random rand = new Random();
 
     public KDTree() {
     }
@@ -44,7 +45,6 @@ public class KDTree<S extends Solution<?>> implements IKDTree {
 
 
     // Remove solution from tree
-    //TODO
     @Override
     public void removeSolution(Solution s) {
 //        KDNode toRemove = this.findInTree(s);
@@ -96,25 +96,26 @@ public class KDTree<S extends Solution<?>> implements IKDTree {
 
     }
 
-    // Get distanced node
 
     @Override
-    public Solution distanced(Solution solution){
-        return distanced(solution, root).getSolution();
+    public Solution distanced(Solution solution, double randomnessFactor){
+        return distanced(solution, root, randomnessFactor).getSolution();
     }
 
-    private KDNode distanced(Solution solution, KDNode rootNode){
+    private KDNode distanced(Solution solution, KDNode rootNode, double randomnessFactor){
+        double random = rand.nextDouble();
         if (rootNode == null){
             return root;
         }
         int dim = rootNode.getDepth() % rootNode.getDimensions();
-        if (Double.parseDouble(solution.getVariableValueString(dim)) < Double.parseDouble(rootNode.getSolution().getVariableValueString(dim))){
+        if (Double.parseDouble(solution.getVariableValueString(dim)) < Double.parseDouble(rootNode.getSolution().getVariableValueString(dim))
+                && random >= randomnessFactor){
             if (rootNode.getRight() != null){
-                return distanced(solution, rootNode.getRight());
+                return distanced(solution, rootNode.getRight(), randomnessFactor);
             }
         } else {
             if (rootNode.getLeft() != null){
-                return distanced(solution, rootNode.getLeft());
+                return distanced(solution, rootNode.getLeft(), randomnessFactor);
             }
         }
         return rootNode;

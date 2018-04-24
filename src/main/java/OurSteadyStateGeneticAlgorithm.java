@@ -25,23 +25,7 @@ public class OurSteadyStateGeneticAlgorithm<S extends Solution<?>> extends Abstr
 
     private final static Logger LOGGER = Logger.getLogger(OurSteadyStateGeneticAlgorithm.class.getName());
 
-    /**
-     * Constructor
-     */
-//  public OurSteadyStateGeneticAlgorithm(Problem<S> problem, int maxEvaluations, int populationSize,
-//                                        CrossoverOperator<S> crossoverOperator, MutationOperator<S> mutationOperator,
-//                                        SelectionOperator<List<S>, S> selectionOperator) {
-//    super(problem);
-//    setMaxPopulationSize(populationSize);
-//    this.maxEvaluations = maxEvaluations;
-//
-//    this.crossoverOperator = crossoverOperator;
-//    this.mutationOperator = mutationOperator;
-//    this.selectionOperator = selectionOperator;
-//
-//    comparator = new ObjectiveComparator<S>(0);
-//
-//  }
+
     public OurSteadyStateGeneticAlgorithm(Problem<S> problem, int maxEvaluations, int populationSize,
                                           CrossoverOperator<S> crossoverOperator, MutationOperator<S> mutationOperator) {
         super(problem);
@@ -138,9 +122,7 @@ public class OurSteadyStateGeneticAlgorithm<S extends Solution<?>> extends Abstr
             //System.out.println(tree);
         }
 
-
-
-        OurSolutionComparator comparator = new OurSolutionComparator(2);
+        OurSolutionComparator comparator = new OurSolutionComparator();
 //        comparator.setDepth(2);
         population.sort(comparator);
 //        System.out.println(population);
