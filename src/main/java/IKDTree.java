@@ -11,14 +11,13 @@ public interface IKDTree {
     boolean isEmpty();
 
     <S extends Solution<?>> void createTree(List<S> population);
+    <S extends Solution<?>> void rebuildTree(List<S> population);
+
 
     KDNode findInTree(Solution solution);
 
     void printTree();
 
     KDNode getRoot();
-    KDNode distanced(KDNode kdNode);//returns the edge node from another subtree
-    Solution distanced(Solution solution, double randomnessFactor);
-    KDNode distancedWithSteps(KDNode kdNode); //uses limited number of steps
-
+    Solution distanced(Solution solution);//returns the edge node from another subtree
 }

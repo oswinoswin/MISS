@@ -1,0 +1,14 @@
+# Read data
+kdtree = read.csv("E:\\VIII\\MiSS\\MISS\\kdtree_leaf_best_balanced_100.csv")
+random = read.csv("E:\\VIII\\MiSS\\MISS\\random_100.csv")
+
+# First Plot with legend
+boxplot(fitness ~ N, data=random[random$N %% 50 == 0,], border='blue')
+boxplot(fitness ~ N, data=kdtree[kdtree$N %% 50 == 0,], border='black', add=TRUE)
+legend("topright", legend=c("KDTree", "Random"), col=c('black', 'blue'), lty=1:1)
+
+# Second Plot without legend 
+library(ggplot2)
+ggplot() + 
+  geom_boxplot(data=kdtree, aes(x = N, y = fitness, group = cut_width(N, 50)), fill='red', alpha=0.5) + 
+  geom_boxplot(data=random, aes(x = N, y = fitness, group = cut_width(N, 50)), fill='blue', alpha=0.5)

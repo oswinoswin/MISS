@@ -6,8 +6,7 @@ import java.util.Comparator;
 public class OurSolutionComparator implements Comparator<Solution> {
     private int depth = 0;
 
-    public OurSolutionComparator(int dimension) {
-        this.dimension = dimension;
+    public OurSolutionComparator() {
     }
 
     private int dimension;

@@ -1,54 +1,38 @@
 import org.uma.jmetal.algorithm.impl.AbstractGeneticAlgorithm;
 import org.uma.jmetal.operator.CrossoverOperator;
 import org.uma.jmetal.operator.MutationOperator;
+import org.uma.jmetal.operator.SelectionOperator;
 import org.uma.jmetal.operator.impl.selection.RandomSelection;
 import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.solution.Solution;
 import org.uma.jmetal.util.comparator.ObjectiveComparator;
 
 import java.util.*;
-import java.util.logging.Logger;
 
 
-public class OurSteadyStateGeneticAlgorithm<S extends Solution<?>> extends AbstractGeneticAlgorithm<S, S> {
+@SuppressWarnings("serial")
+public class RandomSteadyStateGeneticAlgorithm<S extends Solution<?>> extends AbstractGeneticAlgorithm<S, S> {
     private Comparator<S> comparator;
     private int maxEvaluations;
     private int evaluations;
-    private IKDTree tree;
     private OurCSVWriter writer;
-
-    private int rebuild;
-    private boolean bestSelect;
-
-
-    private final static Logger LOGGER = Logger.getLogger(OurSteadyStateGeneticAlgorithm.class.getName());
-
 
     /**
      * Constructor
      */
-
-    public OurSteadyStateGeneticAlgorithm(Problem<S> problem, int maxEvaluations, int populationSize,
-                                          CrossoverOperator<S> crossoverOperator, MutationOperator<S> mutationOperator,
-                                          OurCSVWriter writer, boolean bestSelect, int rebuild) {
+    public RandomSteadyStateGeneticAlgorithm(Problem<S> problem, int maxEvaluations, int populationSize,
+                                       CrossoverOperator<S> crossoverOperator, MutationOperator<S> mutationOperator, OurCSVWriter writer) {
         super(problem);
         setMaxPopulationSize(populationSize);
         this.maxEvaluations = maxEvaluations;
 
         this.crossoverOperator = crossoverOperator;
         this.mutationOperator = mutationOperator;
-
         this.selectionOperator = new RandomSelection<>();
-        this.tree = new KDTree<>();
 
         comparator = new ObjectiveComparator<S>(0);
-
         this.writer = writer;
-
-        this.bestSelect = bestSelect;
-        this.rebuild = rebuild;
     }
-
 
     @Override
     protected boolean isStoppingConditionReached() {
@@ -60,14 +44,10 @@ public class OurSteadyStateGeneticAlgorithm<S extends Solution<?>> extends Abstr
         Collections.sort(population, comparator);
         int worstSolutionIndex = population.size() - 1;
         if (comparator.compare(population.get(worstSolutionIndex), offspringPopulation.get(0)) > 0) {
-            tree.removeSolution(population.get(worstSolutionIndex));
-            tree.addSolution(offspringPopulation.get(0));
-
-//            tree.rebuildTree(getPopulation());
-
             population.remove(worstSolutionIndex);
             population.add(offspringPopulation.get(0));
         }
+
         return population;
     }
 
@@ -89,28 +69,15 @@ public class OurSteadyStateGeneticAlgorithm<S extends Solution<?>> extends Abstr
     @Override
     protected List<S> selection(List<S> population) {
         List<S> matingPopulation = new ArrayList<>(2);
-
-        S solution;
-        if (bestSelect) {
-            solution = getBest(population);
-        } else {
-            solution = selectionOperator.execute(population);
+        for (int i = 0; i < 2; i++) {
+            S solution = selectionOperator.execute(population);
+            matingPopulation.add(solution);
         }
-        matingPopulation.add(solution);
-        matingPopulation.add((S) tree.distanced(solution));
         return matingPopulation;
     }
 
     @Override
     protected List<S> evaluatePopulation(List<S> population) {
-        if (tree.isEmpty()) {
-            tree.createTree(population);
-        }
-
-        OurSolutionComparator comparator = new OurSolutionComparator();
-
-        population.sort(comparator);
-
         for (S solution : population) {
             getProblem().evaluate(solution);
         }
@@ -134,9 +101,6 @@ public class OurSteadyStateGeneticAlgorithm<S extends Solution<?>> extends Abstr
         if (evaluations % 50 == 0) {
             System.out.println(evaluations + " " + fitness() + " " + metric());
         }
-        if (evaluations % rebuild == 0 ) {
-            tree.rebuildTree(getPopulation());
-        }
         evaluations++;
     }
 
@@ -149,6 +113,7 @@ public class OurSteadyStateGeneticAlgorithm<S extends Solution<?>> extends Abstr
     public String getDescription() {
         return "Steady-State Genetic Algorithm";
     }
+
 
     private double metric(){
         int size = getProblem().getNumberOfVariables();
@@ -180,12 +145,5 @@ public class OurSteadyStateGeneticAlgorithm<S extends Solution<?>> extends Abstr
     private double fitness(){
         Collections.sort(getPopulation(), comparator);
         return getPopulation().get(0).getObjective(0);
-    }
-
-    private S getBest(List<S> population){
-        Random generator = new Random();
-        int i = generator.nextInt(getMaxPopulationSize()/5);
-        Collections.sort(population, comparator);
-        return population.get(i);
     }
 }
