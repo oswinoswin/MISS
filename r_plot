@@ -16,3 +16,17 @@ library(ggplot2)
 ggplot() + 
   geom_boxplot(data=df, aes(x = N, y = fitness, fill=factor(Type), group=paste(cut_width(N, 100), Type)))+
     ggtitle("Rastrigin 100") + xlab("Number of evaluations") + ylab("Fitness")+ labs(fill="")
+
+# Plot with outliers color of data
+ggplot() +
+  geom_boxplot(data=df, 
+               aes(x = N, y = fitness, col=factor(Type), group=paste(cut_width(N, 100), Type)), 
+               outlier.colour = NULL, outlier.size = 0.5) +
+  ggtitle("Rastrigin 100") + xlab("Number of evaluations") + ylab("Fitness")+ labs(fill="")
+
+# Plot without outliers
+ggplot() +
+  geom_boxplot(data=df, 
+               aes(x = N, y = fitness, col=factor(Type), group=paste(cut_width(N, 100), Type)), 
+               outlier.shape = NA) +
+  ggtitle("Rastrigin 100") + xlab("Number of evaluations") + ylab("Fitness")+ labs(fill="")
