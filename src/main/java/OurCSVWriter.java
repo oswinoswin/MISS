@@ -1,6 +1,5 @@
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.OpenOption;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
@@ -8,11 +7,9 @@ import static java.nio.file.StandardOpenOption.*;
 
 public class OurCSVWriter{
 
-//    private String fileName;
     private Path path;
 
     public OurCSVWriter(String fileName){
-//        this.fileName = fileName;
         this.path = Paths.get(fileName);
     }
 
