@@ -1,7 +1,6 @@
 import org.uma.jmetal.algorithm.impl.AbstractGeneticAlgorithm;
 import org.uma.jmetal.operator.CrossoverOperator;
 import org.uma.jmetal.operator.MutationOperator;
-import org.uma.jmetal.operator.SelectionOperator;
 import org.uma.jmetal.operator.impl.selection.RandomSelection;
 import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.solution.Solution;
@@ -20,8 +19,8 @@ public class RandomSteadyStateGeneticAlgorithm<S extends Solution<?>> extends Ab
     /**
      * Constructor
      */
-    public RandomSteadyStateGeneticAlgorithm(Problem<S> problem, int maxEvaluations, int populationSize,
-                                       CrossoverOperator<S> crossoverOperator, MutationOperator<S> mutationOperator, OurCSVWriter writer) {
+    RandomSteadyStateGeneticAlgorithm(Problem<S> problem, int maxEvaluations, int populationSize,
+                                             CrossoverOperator<S> crossoverOperator, MutationOperator<S> mutationOperator, OurCSVWriter writer) {
         super(problem);
         setMaxPopulationSize(populationSize);
         this.maxEvaluations = maxEvaluations;
@@ -30,7 +29,7 @@ public class RandomSteadyStateGeneticAlgorithm<S extends Solution<?>> extends Ab
         this.mutationOperator = mutationOperator;
         this.selectionOperator = new RandomSelection<>();
 
-        comparator = new ObjectiveComparator<S>(0);
+        comparator = new ObjectiveComparator<>(0);
         this.writer = writer;
     }
 
@@ -73,7 +72,15 @@ public class RandomSteadyStateGeneticAlgorithm<S extends Solution<?>> extends Ab
             S solution = selectionOperator.execute(population);
             matingPopulation.add(solution);
         }
+//        matingPopulation.add(getBest(population));
         return matingPopulation;
+    }
+
+    private S getBest(List<S> population) {
+        Random generator = new Random();
+        int i = generator.nextInt(getMaxPopulationSize() / 5);
+        Collections.sort(population, comparator);
+        return population.get(i);
     }
 
     @Override
@@ -115,7 +122,7 @@ public class RandomSteadyStateGeneticAlgorithm<S extends Solution<?>> extends Ab
     }
 
 
-    private double metric(){
+    private double metric() {
         int size = getProblem().getNumberOfVariables();
         int popSize = getPopulation().size();
         double[] tmp = new double[size];
@@ -123,18 +130,18 @@ public class RandomSteadyStateGeneticAlgorithm<S extends Solution<?>> extends Ab
         Arrays.fill(tmp, 0);
         Arrays.fill(std, 0);
         //dodajemy wszystkie wartości
-        for (S s : getPopulation()){
-            for (int i=0; i<size; i++){
+        for (S s : getPopulation()) {
+            for (int i = 0; i < size; i++) {
                 tmp[i] += Double.parseDouble(s.getVariableValueString(i));
             }
         }
         //liczymy średnią
-        for (int i = 0; i<size; i++){
+        for (int i = 0; i < size; i++) {
             tmp[i] /= popSize;
         }
         //obliczamy sume do std
-        for (S s : getPopulation()){
-            for (int i=0; i<size; i++){
+        for (S s : getPopulation()) {
+            for (int i = 0; i < size; i++) {
                 std[i] += Math.pow(Double.parseDouble(s.getVariableValueString(i)) - tmp[i], 2);
             }
         }
@@ -142,7 +149,7 @@ public class RandomSteadyStateGeneticAlgorithm<S extends Solution<?>> extends Ab
         return Math.sqrt(std[0]);
     }
 
-    private double fitness(){
+    private double fitness() {
         Collections.sort(getPopulation(), comparator);
         return getPopulation().get(0).getObjective(0);
     }

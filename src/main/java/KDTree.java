@@ -1,5 +1,4 @@
 import org.uma.jmetal.solution.Solution;
-import org.uma.jmetal.util.JMetalException;
 
 import java.util.List;
 import java.util.Random;
@@ -9,6 +8,7 @@ public class KDTree<S extends Solution<?>> implements IKDTree {
     private KDNode root;
     private OurSolutionComparator solutionComparator = new OurSolutionComparator();
     private Random random = new Random();
+
     public KDTree() {
     }
 
@@ -50,23 +50,23 @@ public class KDTree<S extends Solution<?>> implements IKDTree {
     }
 
 
-        // Remove solution from tree
+    // Remove solution from tree
     @Override
     public void removeSolution(Solution s) {
         this.root = removeSolution(this.root, s);
     }
 
     private KDNode removeSolution(KDNode rootNode, Solution toRemove) {
-        if (rootNode == null){
+        if (rootNode == null) {
             return null;
         }
         if (equalSolutions(rootNode.getSolution(), toRemove)) {
-            if (rootNode.getRight() != null){
+            if (rootNode.getRight() != null) {
                 KDNode min = findMin(rootNode.getRight(), rootNode.getDepth() % rootNode.getDimensions());
                 rootNode.setSolution(min.getSolution());
                 min = removeSolution(rootNode.getRight(), min.getSolution());
                 rootNode.setRight(min);
-            } else if (rootNode.getLeft() != null){
+            } else if (rootNode.getLeft() != null) {
                 KDNode max = findMax(rootNode.getLeft(), rootNode.getDepth() % rootNode.getDimensions());
                 rootNode.setSolution(max.getSolution());
                 max = removeSolution(rootNode.getLeft(), max.getSolution());
@@ -76,7 +76,7 @@ public class KDTree<S extends Solution<?>> implements IKDTree {
             }
             return rootNode;
         } else {
-            if (Double.parseDouble(rootNode.getSolution().getVariableValueString(rootNode.getDepth()%rootNode.getDimensions())) > Double.parseDouble(toRemove.getVariableValueString(rootNode.getDepth()%rootNode.getDimensions()))){
+            if (Double.parseDouble(rootNode.getSolution().getVariableValueString(rootNode.getDepth() % rootNode.getDimensions())) > Double.parseDouble(toRemove.getVariableValueString(rootNode.getDepth() % rootNode.getDimensions()))) {
                 rootNode.setLeft(removeSolution(rootNode.getLeft(), toRemove));
             } else {
                 rootNode.setRight(removeSolution(rootNode.getRight(), toRemove));
@@ -89,38 +89,82 @@ public class KDTree<S extends Solution<?>> implements IKDTree {
     // Get distanced node
 
     @Override
-    public Solution distanced(Solution solution){
-        return distancedToTheEnd(solution, root).getSolution();
+    public Solution distanced(Solution solution, int type) {
+        switch (type) {
+            case 1:
+                return distancedToTheEnd(solution, root).getSolution();
+            case 2:
+                if (equalSolutions(solution, root.getSolution())) {
+                    return distancedToTheEnd(solution, root).getSolution();
+                } else {
+                    return distancedToTheNodeLevel(solution, root, root).getSolution();
+                }
+            case 3:
+                return distancedRandomStop(solution, root).getSolution();
+            default:
+                return null;
+        }
     }
 
-    private KDNode distancedToTheEnd(Solution solution, KDNode rootNode){
-        if (rootNode == null){
+    private KDNode distancedToTheEnd(Solution solution, KDNode rootNode) {
+        if (rootNode == null) {
             return root;
         }
         int dim = rootNode.getDepth() % rootNode.getDimensions();
-        if (Double.parseDouble(solution.getVariableValueString(dim)) < Double.parseDouble(rootNode.getSolution().getVariableValueString(dim))){
-            if (rootNode.getRight() != null){
+        if (Double.parseDouble(solution.getVariableValueString(dim)) < Double.parseDouble(rootNode.getSolution().getVariableValueString(dim))) {
+            if (rootNode.getRight() != null) {
                 return distancedToTheEnd(solution, rootNode.getRight());
             }
         } else {
-            if (rootNode.getLeft() != null){
+            if (rootNode.getLeft() != null) {
                 return distancedToTheEnd(solution, rootNode.getLeft());
             }
         }
         return rootNode;
     }
 
-    private KDNode distancedRandomStop(Solution solution, KDNode rootNode){
-        if (rootNode == null){
+    private KDNode distancedToTheNodeLevel(Solution solution, KDNode rootNode, KDNode solutionNode) {
+        if (rootNode == null) {
             return root;
         }
         int dim = rootNode.getDepth() % rootNode.getDimensions();
-        if (Double.parseDouble(solution.getVariableValueString(dim)) < Double.parseDouble(rootNode.getSolution().getVariableValueString(dim))){
-            if (rootNode.getRight() != null && random.nextBoolean()){
+        if (equalSolutions(solution, solutionNode.getSolution())) {
+            return rootNode;
+        }
+
+        if (Double.parseDouble(solution.getVariableValueString(dim)) < Double.parseDouble(solutionNode.getSolution().getVariableValueString(dim))) {
+            solutionNode = solutionNode.getLeft();
+        } else {
+            solutionNode = solutionNode.getRight();
+        }
+        if (solutionNode != null) {
+            if (Double.parseDouble(solution.getVariableValueString(dim)) < Double.parseDouble(rootNode.getSolution().getVariableValueString(dim))) {
+                if (rootNode.getRight() != null) {
+                    return distancedToTheNodeLevel(solution, rootNode.getRight(), solutionNode);
+                }
+            } else {
+                if (rootNode.getLeft() != null) {
+                    return distancedToTheNodeLevel(solution, rootNode.getLeft(), solutionNode);
+                }
+            }
+        }
+        return rootNode;
+    }
+
+    private KDNode distancedRandomStop(Solution solution, KDNode rootNode) {
+        if (rootNode == null) {
+            return root;
+        }
+
+        int dim = rootNode.getDepth() % rootNode.getDimensions();
+        int rand = 5;
+
+        if (Double.parseDouble(solution.getVariableValueString(dim)) < Double.parseDouble(rootNode.getSolution().getVariableValueString(dim))) {
+            if (rootNode.getRight() != null && random.nextInt(rand) != 1) {
                 return distancedRandomStop(solution, rootNode.getRight());
             }
         } else {
-            if (rootNode.getLeft() != null && random.nextBoolean()){
+            if (rootNode.getLeft() != null && random.nextInt(rand) != 1) {
                 return distancedRandomStop(solution, rootNode.getLeft());
             }
         }
@@ -128,14 +172,14 @@ public class KDTree<S extends Solution<?>> implements IKDTree {
     }
 
 
-    public KDNode getRoot(){
+    public KDNode getRoot() {
         return this.root;
     }
 
     // Other functions
-    private boolean equalSolutions(Solution solution1, Solution solution2){
-        for (int i = 0; i < solution1.getNumberOfVariables(); i++){
-            if (solution1.getVariableValue(i) != solution2.getVariableValue(i)){
+    private boolean equalSolutions(Solution solution1, Solution solution2) {
+        for (int i = 0; i < solution1.getNumberOfVariables(); i++) {
+            if (solution1.getVariableValue(i) != solution2.getVariableValue(i)) {
                 return false;
             }
         }
@@ -186,9 +230,9 @@ public class KDTree<S extends Solution<?>> implements IKDTree {
     }
 
 
-    private KDNode minNode(KDNode x, KDNode y, KDNode z){
+    private KDNode minNode(KDNode x, KDNode y, KDNode z) {
         KDNode res = x;
-        if ( y != null) {
+        if (y != null) {
             if (solutionComparator.compare(y.getSolution(), res.getSolution()) < 0) { // y is smaller
                 res = y;
             }
@@ -202,9 +246,9 @@ public class KDTree<S extends Solution<?>> implements IKDTree {
     }
 
 
-    private KDNode maxNode(KDNode x, KDNode y, KDNode z){
+    private KDNode maxNode(KDNode x, KDNode y, KDNode z) {
         KDNode res = x;
-        if ( y != null) {
+        if (y != null) {
             if (solutionComparator.compare(y.getSolution(), res.getSolution()) > 0) { // res is smaller
                 res = y;
             }
@@ -219,11 +263,10 @@ public class KDTree<S extends Solution<?>> implements IKDTree {
 
     @Override
     public void addSolution(Solution s) {
-        if(this.isEmpty()){
+        if (this.isEmpty()) {
             root = new KDNode(s, 0);
             solutionComparator.setDepth(root.getDepth());
-        }
-        else{
+        } else {
             this.root.addChild(s);
         }
     }

@@ -7,7 +7,6 @@ import org.uma.jmetal.solution.Solution;
 import org.uma.jmetal.util.comparator.ObjectiveComparator;
 
 import java.util.*;
-import java.util.logging.Logger;
 
 
 public class OurSteadyStateGeneticAlgorithm<S extends Solution<?>> extends AbstractGeneticAlgorithm<S, S> {
@@ -20,15 +19,14 @@ public class OurSteadyStateGeneticAlgorithm<S extends Solution<?>> extends Abstr
     private int rebuild;
     private boolean bestSelect;
 
-
-    private final static Logger LOGGER = Logger.getLogger(OurSteadyStateGeneticAlgorithm.class.getName());
+    private int algorithmType;
 
     /**
      * Constructor
      */
-    public OurSteadyStateGeneticAlgorithm(Problem<S> problem, int maxEvaluations, int populationSize,
+    OurSteadyStateGeneticAlgorithm(Problem<S> problem, int maxEvaluations, int populationSize,
                                           CrossoverOperator<S> crossoverOperator, MutationOperator<S> mutationOperator,
-                                          OurCSVWriter writer, boolean bestSelect, int rebuild) {
+                                          OurCSVWriter writer, boolean bestSelect, int rebuild, int algorithmType) {
         super(problem);
         setMaxPopulationSize(populationSize);
         this.maxEvaluations = maxEvaluations;
@@ -45,6 +43,7 @@ public class OurSteadyStateGeneticAlgorithm<S extends Solution<?>> extends Abstr
 
         this.bestSelect = bestSelect;
         this.rebuild = rebuild;
+        this.algorithmType = algorithmType;
     }
 
 
@@ -60,9 +59,6 @@ public class OurSteadyStateGeneticAlgorithm<S extends Solution<?>> extends Abstr
         if (comparator.compare(population.get(worstSolutionIndex), offspringPopulation.get(0)) > 0) {
             tree.removeSolution(population.get(worstSolutionIndex));
             tree.addSolution(offspringPopulation.get(0));
-
-//            tree.rebuildTree(getPopulation());
-
             population.remove(worstSolutionIndex);
             population.add(offspringPopulation.get(0));
         }
@@ -95,7 +91,7 @@ public class OurSteadyStateGeneticAlgorithm<S extends Solution<?>> extends Abstr
             solution = selectionOperator.execute(population);
         }
         matingPopulation.add(solution);
-        matingPopulation.add((S) tree.distanced(solution));
+        matingPopulation.add((S) tree.distanced(solution, algorithmType));
         return matingPopulation;
     }
 
@@ -131,7 +127,7 @@ public class OurSteadyStateGeneticAlgorithm<S extends Solution<?>> extends Abstr
         if (evaluations % 50 == 0) {
             System.out.println(evaluations + " " + fitness() + " " + metric());
         }
-        if (evaluations % rebuild == 0 ) {
+        if (evaluations % rebuild == 0) {
             tree.rebuildTree(getPopulation());
         }
         evaluations++;
@@ -144,10 +140,10 @@ public class OurSteadyStateGeneticAlgorithm<S extends Solution<?>> extends Abstr
 
     @Override
     public String getDescription() {
-        return "Steady-State Genetic Algorithm";
+        return "KD-Tree Steady-State Genetic Algorithm";
     }
 
-    private double metric(){
+    private double metric() {
         int size = getProblem().getNumberOfVariables();
         int popSize = getPopulation().size();
         double[] tmp = new double[size];
@@ -155,18 +151,18 @@ public class OurSteadyStateGeneticAlgorithm<S extends Solution<?>> extends Abstr
         Arrays.fill(tmp, 0);
         Arrays.fill(std, 0);
         //dodajemy wszystkie wartości
-        for (S s : getPopulation()){
-            for (int i=0; i<size; i++){
+        for (S s : getPopulation()) {
+            for (int i = 0; i < size; i++) {
                 tmp[i] += Double.parseDouble(s.getVariableValueString(i));
             }
         }
         //liczymy średnią
-        for (int i = 0; i<size; i++){
+        for (int i = 0; i < size; i++) {
             tmp[i] /= popSize;
         }
         //obliczamy sume do std
-        for (S s : getPopulation()){
-            for (int i=0; i<size; i++){
+        for (S s : getPopulation()) {
+            for (int i = 0; i < size; i++) {
                 std[i] += Math.pow(Double.parseDouble(s.getVariableValueString(i)) - tmp[i], 2);
             }
         }
@@ -174,14 +170,14 @@ public class OurSteadyStateGeneticAlgorithm<S extends Solution<?>> extends Abstr
         return Math.sqrt(std[0]);
     }
 
-    private double fitness(){
+    private double fitness() {
         Collections.sort(getPopulation(), comparator);
         return getPopulation().get(0).getObjective(0);
     }
 
-    private S getBest(List<S> population){
+    private S getBest(List<S> population) {
         Random generator = new Random();
-        int i = generator.nextInt(getMaxPopulationSize()/5);
+        int i = generator.nextInt(getMaxPopulationSize() / 5);
         Collections.sort(population, comparator);
         return population.get(i);
     }
