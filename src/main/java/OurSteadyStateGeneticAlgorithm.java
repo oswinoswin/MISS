@@ -20,13 +20,14 @@ public class OurSteadyStateGeneticAlgorithm<S extends Solution<?>> extends Abstr
     private boolean bestSelect;
 
     private int algorithmType;
+    private  double randomnessFactor;
 
-    /**
-     * Constructor
-     */
-    OurSteadyStateGeneticAlgorithm(Problem<S> problem, int maxEvaluations, int populationSize,
+
+
+
+    public OurSteadyStateGeneticAlgorithm(Problem<S> problem, int maxEvaluations, int populationSize,
                                           CrossoverOperator<S> crossoverOperator, MutationOperator<S> mutationOperator,
-                                          OurCSVWriter writer, boolean bestSelect, int rebuild, int algorithmType) {
+                                          OurCSVWriter writer, boolean bestSelect, int rebuild, int algorithmType, double randomnessFactor) {
         super(problem);
         setMaxPopulationSize(populationSize);
         this.maxEvaluations = maxEvaluations;
@@ -44,6 +45,7 @@ public class OurSteadyStateGeneticAlgorithm<S extends Solution<?>> extends Abstr
         this.bestSelect = bestSelect;
         this.rebuild = rebuild;
         this.algorithmType = algorithmType;
+        this.randomnessFactor = randomnessFactor;
     }
 
 
@@ -91,7 +93,7 @@ public class OurSteadyStateGeneticAlgorithm<S extends Solution<?>> extends Abstr
             solution = selectionOperator.execute(population);
         }
         matingPopulation.add(solution);
-        matingPopulation.add((S) tree.distanced(solution, algorithmType));
+        matingPopulation.add((S) tree.distanced(solution, algorithmType, randomnessFactor));
         return matingPopulation;
     }
 
@@ -102,6 +104,7 @@ public class OurSteadyStateGeneticAlgorithm<S extends Solution<?>> extends Abstr
         }
 
         OurSolutionComparator comparator = new OurSolutionComparator();
+
         population.sort(comparator);
 
         for (S solution : population) {
@@ -125,9 +128,9 @@ public class OurSteadyStateGeneticAlgorithm<S extends Solution<?>> extends Abstr
     public void updateProgress() {
         writer.write(evaluations, fitness(), metric());
         if (evaluations % 50 == 0) {
-            System.out.println(evaluations + " " + fitness() + " " + metric());
+            //System.out.println(evaluations + " " + fitness() + " " + metric());
         }
-        if (evaluations % rebuild == 0) {
+        if (evaluations % rebuild == 0 ) {
             tree.rebuildTree(getPopulation());
         }
         evaluations++;
@@ -143,7 +146,7 @@ public class OurSteadyStateGeneticAlgorithm<S extends Solution<?>> extends Abstr
         return "KD-Tree Steady-State Genetic Algorithm";
     }
 
-    private double metric() {
+    private double metric(){
         int size = getProblem().getNumberOfVariables();
         int popSize = getPopulation().size();
         double[] tmp = new double[size];
@@ -151,8 +154,8 @@ public class OurSteadyStateGeneticAlgorithm<S extends Solution<?>> extends Abstr
         Arrays.fill(tmp, 0);
         Arrays.fill(std, 0);
         //dodajemy wszystkie wartości
-        for (S s : getPopulation()) {
-            for (int i = 0; i < size; i++) {
+        for (S s : getPopulation()){
+            for (int i=0; i<size; i++){
                 tmp[i] += Double.parseDouble(s.getVariableValueString(i));
             }
         }
@@ -161,8 +164,8 @@ public class OurSteadyStateGeneticAlgorithm<S extends Solution<?>> extends Abstr
             tmp[i] /= popSize;
         }
         //obliczamy sume do std
-        for (S s : getPopulation()) {
-            for (int i = 0; i < size; i++) {
+        for (S s : getPopulation()){
+            for (int i=0; i<size; i++){
                 std[i] += Math.pow(Double.parseDouble(s.getVariableValueString(i)) - tmp[i], 2);
             }
         }
@@ -175,9 +178,9 @@ public class OurSteadyStateGeneticAlgorithm<S extends Solution<?>> extends Abstr
         return getPopulation().get(0).getObjective(0);
     }
 
-    private S getBest(List<S> population) {
+    private S getBest(List<S> population){
         Random generator = new Random();
-        int i = generator.nextInt(getMaxPopulationSize() / 5);
+        int i = generator.nextInt(getMaxPopulationSize()/5);
         Collections.sort(population, comparator);
         return population.get(i);
     }

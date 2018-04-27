@@ -11,7 +11,6 @@ public interface IKDTree {
     boolean isEmpty();
 
     <S extends Solution<?>> void createTree(List<S> population);
-
     <S extends Solution<?>> void rebuildTree(List<S> population);
 
     KDNode findInTree(Solution solution);
@@ -19,7 +18,5 @@ public interface IKDTree {
     void printTree();
 
     KDNode getRoot();
-
-    Solution distanced(Solution solution, int type);//returns the edge node from another subtree
-
+    Solution distanced(Solution solution, int type, double randomnessFactor);//returns the edge node from another subtree
 }

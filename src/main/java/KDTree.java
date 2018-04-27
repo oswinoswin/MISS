@@ -89,13 +89,13 @@ public class KDTree<S extends Solution<?>> implements IKDTree {
     // Get distanced node
 
     @Override
-    public Solution distanced(Solution solution, int type) {
+    public Solution distanced(Solution solution, int type, double randomnessFactor) {
         switch (type) {
             case 1:
-                return distancedToTheEnd(solution, root).getSolution();
+                return distancedToTheEnd(solution, root, randomnessFactor).getSolution();
             case 2:
                 if (equalSolutions(solution, root.getSolution())) {
-                    return distancedToTheEnd(solution, root).getSolution();
+                    return distancedToTheEnd(solution, root, randomnessFactor).getSolution();
                 } else {
                     return distancedToTheNodeLevel(solution, root, root).getSolution();
                 }
@@ -106,18 +106,20 @@ public class KDTree<S extends Solution<?>> implements IKDTree {
         }
     }
 
-    private KDNode distancedToTheEnd(Solution solution, KDNode rootNode) {
+    private KDNode distancedToTheEnd(Solution solution, KDNode rootNode, double randomnessFactor) {
+        double rand = random.nextDouble();
         if (rootNode == null) {
             return root;
         }
         int dim = rootNode.getDepth() % rootNode.getDimensions();
-        if (Double.parseDouble(solution.getVariableValueString(dim)) < Double.parseDouble(rootNode.getSolution().getVariableValueString(dim))) {
+        if (Double.parseDouble(solution.getVariableValueString(dim)) < Double.parseDouble(rootNode.getSolution().getVariableValueString(dim))
+                && rand > randomnessFactor) {
             if (rootNode.getRight() != null) {
-                return distancedToTheEnd(solution, rootNode.getRight());
+                return distancedToTheEnd(solution, rootNode.getRight(), randomnessFactor);
             }
         } else {
             if (rootNode.getLeft() != null) {
-                return distancedToTheEnd(solution, rootNode.getLeft());
+                return distancedToTheEnd(solution, rootNode.getLeft(), randomnessFactor);
             }
         }
         return rootNode;
