@@ -43,8 +43,6 @@ public class OurSteadyStateGeneticAlgorithmRunner {
             }
         }
 
-        System.out.println(variables);
-
         for (int v : variables) {
             problems.add(new Rastrigin(v));
             problems.add(new Rosenbrock(v));
@@ -79,6 +77,7 @@ public class OurSteadyStateGeneticAlgorithmRunner {
             algorithm = new RandomSteadyStateGeneticAlgorithm<>(problem, MAX_EVALUATIONS, POPULATION_SIZE, crossoverOperator, mutationOperator, writer);
             JMetalLogger.logger.info("Starting: Random " + problem.getName() + size + i);
             execute(algorithm);
+
         }
     }
 
