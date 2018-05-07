@@ -22,11 +22,13 @@ public class OurSteadyStateGeneticAlgorithmRunner {
     private static int MAX_EVALUATIONS = 5000;
     private static int N = 10;
     private static OurCSVWriter writer = new OurCSVWriter(".csv");
+    private static OurCSVWriter timeWriter = new OurCSVWriter("times.csv");
 
 
     public static void main(String[] args) throws Exception {
         List<DoubleProblem> problems = new LinkedList<>();
         List<Integer> variables = new ArrayList<>(Arrays.asList(20, 50, 100, 200, 500, 1000));
+        timeWriter.clearTime();
 
         for (String arg : args){
             if (arg.startsWith("-s")){
@@ -40,6 +42,8 @@ public class OurSteadyStateGeneticAlgorithmRunner {
                 MAX_EVALUATIONS = Integer.parseInt(arg.substring(3));
             } else if (arg.startsWith("-N")){
                 N = Integer.parseInt(arg.substring(3));
+            } else {
+                System.out.println("Usage: \n -s [population size] \n -v [list of variables number] \n -m [max evaluations] \n -N [samples]");
             }
         }
 
@@ -66,7 +70,7 @@ public class OurSteadyStateGeneticAlgorithmRunner {
         writer.clear();
         Algorithm<DoubleSolution> algorithm;
         for (int i = 0; i < N; i++) {
-            algorithm = new OurSteadyStateGeneticAlgorithm<>(problem, MAX_EVALUATIONS, POPULATION_SIZE, crossoverOperator, mutationOperator, writer, false, 50, type);
+            algorithm = new OurSteadyStateGeneticAlgorithm<>(problem, MAX_EVALUATIONS, POPULATION_SIZE, crossoverOperator, mutationOperator, writer, false, 50, type, 0);
             JMetalLogger.logger.info("Starting: KDTree " + problem.getName() + size);
             execute(algorithm);
         }
@@ -75,7 +79,7 @@ public class OurSteadyStateGeneticAlgorithmRunner {
         writer.clear();
         for (int i = 0; i < N; i++) {
             algorithm = new RandomSteadyStateGeneticAlgorithm<>(problem, MAX_EVALUATIONS, POPULATION_SIZE, crossoverOperator, mutationOperator, writer);
-            JMetalLogger.logger.info("Starting: Random " + problem.getName() + size + i);
+            JMetalLogger.logger.info("Starting: Random " + problem.getName() + size);
             execute(algorithm);
 
         }
@@ -86,6 +90,7 @@ public class OurSteadyStateGeneticAlgorithmRunner {
                 .execute();
         long computingTime = algorithmRunner.getComputingTime();
         DoubleSolution solution = algorithm.getResult();
+        timeWriter.writeTime(algorithm.getName(), solution.getNumberOfVariables(), computingTime);
         JMetalLogger.logger.info("Total execution time: " + computingTime + "ms");
         JMetalLogger.logger.info("Fitness: " + solution.getObjective(0));
     }

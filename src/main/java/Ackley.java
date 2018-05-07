@@ -9,7 +9,7 @@ public class Ackley extends AbstractDoubleProblem {
 
     /**
      * Constructor
-     * Creates a default instance of the Rosenbrock problem
+     * Creates a default instance of the Ackley problem
      *
      * @param numberOfVariables Number of variables of the problem
      */

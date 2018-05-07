@@ -9,7 +9,7 @@ public class Schwefel extends AbstractDoubleProblem {
 
     /**
      * Constructor
-     * Creates a default instance of the Rosenbrock problem
+     * Creates a default instance of the Schwefel problem
      *
      * @param numberOfVariables Number of variables of the problem
      */

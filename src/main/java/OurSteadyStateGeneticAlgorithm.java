@@ -22,9 +22,6 @@ public class OurSteadyStateGeneticAlgorithm<S extends Solution<?>> extends Abstr
     private int algorithmType;
     private  double randomnessFactor;
 
-
-
-
     public OurSteadyStateGeneticAlgorithm(Problem<S> problem, int maxEvaluations, int populationSize,
                                           CrossoverOperator<S> crossoverOperator, MutationOperator<S> mutationOperator,
                                           OurCSVWriter writer, boolean bestSelect, int rebuild, int algorithmType, double randomnessFactor) {
@@ -38,7 +35,7 @@ public class OurSteadyStateGeneticAlgorithm<S extends Solution<?>> extends Abstr
         this.selectionOperator = new RandomSelection<>();
         this.tree = new KDTree<>();
 
-        comparator = new ObjectiveComparator<S>(0);
+        comparator = new ObjectiveComparator<>(0);
 
         this.writer = writer;
 

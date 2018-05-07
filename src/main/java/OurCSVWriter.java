@@ -26,6 +26,23 @@ public class OurCSVWriter{
         }
     }
 
+    public void writeTime(String name, int size, long time){
+        String line = name + "," + size +"," + time + "\n";
+        try {
+            Files.write(path, line.getBytes(), APPEND);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void clearTime(){
+        try {
+            Files.write(path, "problem,size,time\n".getBytes(), TRUNCATE_EXISTING, CREATE);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     public void clear(){
         try {
             Files.write(path, "N,fitness,metric\n".getBytes(), TRUNCATE_EXISTING, CREATE);
