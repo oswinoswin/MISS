@@ -54,4 +54,3 @@ public class Schwefel extends AbstractDoubleProblem {
         solution.setObjective(0, y);
     }
 }
-

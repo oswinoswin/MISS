@@ -126,11 +126,11 @@ public class OurSteadyStateGeneticAlgorithm<S extends Solution<?>> extends Abstr
 
     @Override
     public void updateProgress() {
-        writer.write(evaluations, fitness(), metric());
-        if (evaluations % 50 == 0) {
-            //System.out.println(evaluations + " " + fitness() + " " + metric());
-        }
-        if (evaluations % rebuild == 0 ) {
+        writer.write(evaluations, fitness(), 0);
+//        if (evaluations % 50 == 0) {
+//            System.out.println(evaluations + " " + fitness() + " " + metric());
+//        }
+        if (evaluations % rebuild == 0) {
             tree.rebuildTree(getPopulation());
         }
         evaluations++;
@@ -138,7 +138,7 @@ public class OurSteadyStateGeneticAlgorithm<S extends Solution<?>> extends Abstr
 
     @Override
     public String getName() {
-        return "ssGA";
+        return "ssGA_KDTree" + algorithmType + "_" + getProblem().getName();
     }
 
     @Override

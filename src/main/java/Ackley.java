@@ -63,4 +63,3 @@ public class Ackley extends AbstractDoubleProblem {
 
 
 }
-
