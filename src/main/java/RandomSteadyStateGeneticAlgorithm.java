@@ -72,16 +72,9 @@ public class RandomSteadyStateGeneticAlgorithm<S extends Solution<?>> extends Ab
             S solution = selectionOperator.execute(population);
             matingPopulation.add(solution);
         }
-//        matingPopulation.add(getBest(population));
         return matingPopulation;
     }
 
-    private S getBest(List<S> population) {
-        Random generator = new Random();
-        int i = generator.nextInt(getMaxPopulationSize() / 5);
-        Collections.sort(population, comparator);
-        return population.get(i);
-    }
 
     @Override
     protected List<S> evaluatePopulation(List<S> population) {
@@ -104,16 +97,16 @@ public class RandomSteadyStateGeneticAlgorithm<S extends Solution<?>> extends Ab
 
     @Override
     public void updateProgress() {
-        writer.write(evaluations, fitness(), metric());
-        if (evaluations % 50 == 0) {
-            System.out.println(evaluations + " " + fitness() + " " + metric());
-        }
+        writer.write(evaluations, fitness(), 0);
+//        if (evaluations % 50 == 0) {
+//            System.out.println(evaluations + " " + fitness() + " " + metric());
+//        }
         evaluations++;
     }
 
     @Override
     public String getName() {
-        return "ssGA";
+        return "ssGA_Random_" + getProblem().getName();
     }
 
     @Override
