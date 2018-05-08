@@ -1,42 +1,19 @@
-# Read data
-kdtree = read.csv("E:\\VIII\\MiSS\\MISS\\kdtree_leaf_rebuild_100.csv")
-random = read.csv("E:\\VIII\\MiSS\\MISS\\random_100.csv")
 
-# First Plot
-boxplot(fitness ~ N, data=random[random$N %% 50 == 0,], border='blue')
-boxplot(fitness ~ N, data=kdtree[kdtree$N %% 50 == 0,], border='black', add=TRUE)
-legend("topright", legend=c("KDTree", "Random"), col=c('black', 'blue'), lty=1:1)
-
-# Second Plot 
-library(ggplot2)
-
-# Prepare data
-kdtree['Type'] <- "KDTree"
-random['Type'] <- "Random"
-df <- rbind(kdtree, random)
-
-# Data aggregate in ranges of lenght 100
-ggplot() + 
-  geom_boxplot(data=df, aes(x = N, y = fitness, fill=factor(Type), group=paste(cut_width(N, 100), Type)))+
-    ggtitle("Rastrigin 100") + xlab("Number of evaluations") + ylab("Fitness")+ labs(fill="")
-    
-# Show only 1/100 data samples
-ggplot() +
-  geom_boxplot(data=df[df$N %% 100 == 0,], 
-               aes(x = N, y = fitness, col=factor(Type), group=paste(N, Type))) +
-  ggtitle("Rastrigin 100") + xlab("Number of evaluations") + ylab("Fitness")+ labs(col="")
-
-
-# Plot with outliers color of data
-ggplot() +
-  geom_boxplot(data=df, 
-               aes(x = N, y = fitness, col=factor(Type), group=paste(cut_width(N, 100), Type)), 
-               outlier.colour = NULL, outlier.size = 0.5) +
-  ggtitle("Rastrigin 100") + xlab("Number of evaluations") + ylab("Fitness")+ labs(col="")
-
-# Plot without outliers
-ggplot() +
-  geom_boxplot(data=df, 
-               aes(x = N, y = fitness, col=factor(Type), group=paste(cut_width(N, 100), Type)), 
-               outlier.shape = NA) +
-  ggtitle("Rastrigin 100") + xlab("Number of evaluations") + ylab("Fitness")+ labs(col="")
+alg <- 'alg1'
+pop <- 30
+for (prob in c('rosenbrock', 'griewank')){ # więcej algorytmów
+  for (size in c(20, 50)){ # jakie tam wielkości problemu były policzone
+    random <- read.csv(paste("E:\\VIII\\MiSS\\MISS\\results\\", prob, "_ssga_random_", size, "_", pop, ".csv", sep='')) # ścieżka do pliku + jego nazwa
+    random['Type'] <- 'Random'
+    kdtree <- read.csv(paste("E:\\VIII\\MiSS\\MISS\\results\\",prob, "_ssga_", alg, "_", size, "_", pop, ".csv", sep='')) # ścieżka do pliku + jego nazwa
+    kdtree['Type'] <- alg
+    df <- rbind(random, kdtree)
+    ggplot() +
+      geom_boxplot(data=df,
+                   aes(x = N, y = fitness, col=factor(Type), group=paste(cut_width(N, 100), Type)),
+                   outlier.color = NULL, outlier.size = 0.5) +
+      ggtitle(paste(prob, alg, "size =", size, "pop =", pop)) + xlab("Number of evaluations") + ylab("Fitness")+ labs(col="")
+    ggsave(filename = paste(paste('boxplot',prob,alg,size,pop,sep='_'), '.png', sep=''), plot=last_plot(), device='png', path="E:\\VIII\\MiSS\\MISS\\results\\",  width=12, height=6)
+      }
+    }
+}
