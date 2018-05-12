@@ -51,11 +51,12 @@ public class Ackley extends AbstractDoubleProblem {
 
         for (int i = 0; i < d - 1; i++) {
             sum1 += x[i]*x[i];
-            sum2 += Math.sqrt(c*x[i]);
+            sum2 += Math.cos(c*x[i]);
         }
 
-        double y = -a*Math.exp(-b*Math.sqrt((1/d)*sum1));
-        y -= Math.exp((1/d)*sum2) + a - Math.exp(1);
+        double y = -a*Math.exp(-b*Math.sqrt(sum1/d));
+        y = y -  Math.exp(sum2/d);
+        y = y + a - Math.exp(1);
 
         solution.setObjective(0, y);
     }
