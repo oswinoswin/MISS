@@ -55,6 +55,7 @@ public class OurSteadyStateGeneticAlgorithmRunner {
             problems.add(new Griewank(v));
             problems.add(new Ackley(v));
             problems.add(new Schwefel(v));
+            problems.add(new DeJong(v));
         }
 
         for (DoubleProblem problem : problems) {
